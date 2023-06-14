@@ -1,15 +1,15 @@
 let fenHolder = ""
+let currentPlayer
 
 function render(fen) {
     fenHolder += fen
-    // sorted array of all row html items
     
     let currentSquare = 1
     let currentRow = 8
     let currentEl
     for (let i = 0; i < fenHolder.length; i++) {
         currentEl = document.querySelector(`#row${currentRow} div:nth-child(${currentSquare})`)
-        if (isNaN(fenHolder[i]) && fenHolder[i] !== "/") {
+        if (isNaN(fenHolder[i]) && fenHolder[i] !== "/" && fenHolder[i] != " ") {
             switch (fenHolder[i]) {
                 case "p":
                     currentEl.innerHTML += `<div class="piece bpawn"></div>`
@@ -47,9 +47,11 @@ function render(fen) {
                 case "K":
                     currentEl.innerHTML += `<div class="piece wking"></div>`
                     break
+                default:
+                    break
             }
             currentSquare++
-        } else if (!isNaN(fenHolder[i])) {
+        } else if (!isNaN(fenHolder[i]) && fenHolder[i] != " ") {
             // if number
             currentSquare += parseInt(fenHolder[i])
             continue
@@ -60,20 +62,78 @@ function render(fen) {
             // move to next row
         } else if (fenHolder[i] === " ") {
             if (fenHolder[i+1] === "w") {
-                // its white's turn
+                currentPlayer = "white"
+                break
             } else {
-                // its black's turn
+                currentPlayer = "black"
+                break
             }
         }
     }
     fenHolder = ""
 }
 
-const startPos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
-function startGame() {
+// start game
 
-    render("r1b1k1nr/p2p1pNp/n2B4/1p1NP2P/6P1/3P1Q2/P1P1K3/q5b1")
+const startPos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"
+
+function startGame() {
+    render(startPos)
+    document.getElementById("turnDisplayer").textContent = `It is ${currentPlayer}'s turn`
 }
 
 startGame()
 
+// move pieces
+// select piece
+const pieces = document.querySelectorAll(".piece")
+pieces.forEach(piece => {
+    piece.addEventListener("click", selectPiece)
+})
+
+function selectPiece(event) {
+    const selectedPiece = event.target
+    const selectedPieces = document.querySelectorAll(".selected")
+    selectedPieces.forEach(piece => {
+        piece.classList.remove("selected")
+    })
+    if (isCurrentPlayerPiece(selectedPiece)) {
+        selectedPiece.classList.add("selected")
+    }
+}
+
+// select square to move to
+const squares = document.querySelectorAll(".square")
+squares.forEach(square => {
+    square.addEventListener("click", movePiece)
+})
+
+function movePiece(event) {
+    const selectedPiece = document.querySelector(".selected")
+    if (isCurrentPlayerPiece(selectedPiece)) {
+        const targetSquare = event.target
+        // add if move valid
+        targetSquare.appendChild(selectedPiece)
+        selectedPiece.classList.remove("selected")
+        changeTurn()
+        document.getElementById("turnDisplayer").textContent = `It is ${currentPlayer}'s turn`
+    }
+}
+
+// setting turns
+
+
+function changeTurn() {
+    currentPlayer = currentPlayer === "white" ? "black" : "white"
+}
+
+function isCurrentPlayerPiece(piece) {
+    let pieceColor
+    const whitePieces = ["wrook", "wknight", "wpawn", "wbishop", "wqueen", "wking"]
+    if (whitePieces.some(pieceName => piece.classList.contains(pieceName))) {
+        pieceColor = "white"
+    } else {
+        pieceColor = "black"
+    }
+    return pieceColor === currentPlayer
+}

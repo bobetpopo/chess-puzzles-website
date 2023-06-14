@@ -1,10 +1,15 @@
+p {
+    text-align: center;
+    margin-top: 50px;   
+}
+
 .chessboard {
     display: flex;
     flex-direction: column;
-    width: 400px;
-    height: 400px;
+    width: 560px;
+    height: 560px;
 
-    margin: 100px auto;
+    margin: 30px auto;
 }
 
 .row {
@@ -13,8 +18,8 @@
 }
 
 .square {
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
 
 }
 
@@ -27,8 +32,8 @@
 }
 
 .piece {
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
     background-size: cover;
     background-position: center;
     position: absolute;
@@ -84,6 +89,6 @@
 }
 
 .selected {
-    border: 4px solid #C8BFC7;
+    border: 3px solid #C8BFC7;
     box-sizing: border-box;
 }
