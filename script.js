@@ -3,7 +3,7 @@ let currentPlayer
 
 function render(fen) {
     fenHolder += fen
-    
+
     let currentSquare = 1
     let currentRow = 8
     let currentEl
@@ -12,40 +12,40 @@ function render(fen) {
         if (isNaN(fenHolder[i]) && fenHolder[i] !== "/" && fenHolder[i] != " ") {
             switch (fenHolder[i]) {
                 case "p":
-                    currentEl.innerHTML += `<div class="piece bpawn"></div>`
+                    currentEl.innerHTML += `<div class="piece black pawn"></div>`
                     break
                 case "r":
-                    currentEl.innerHTML += `<div class="piece brook"></div>`
+                    currentEl.innerHTML += `<div class="piece black rook"></div>`
                     break
                 case "n":
-                    currentEl.innerHTML += `<div class="piece bknight"></div>`
+                    currentEl.innerHTML += `<div class="piece black knight"></div>`
                     break
                 case "b":
-                    currentEl.innerHTML += `<div class="piece bbishop"></div>`
+                    currentEl.innerHTML += `<div class="piece black bishop"></div>`
                     break
                 case "q":
-                    currentEl.innerHTML += `<div class="piece bqueen"></div>`
+                    currentEl.innerHTML += `<div class="piece black queen"></div>`
                     break
                 case "k":
-                    currentEl.innerHTML += `<div class="piece bking"></div>`
+                    currentEl.innerHTML += `<div class="piece black king"></div>`
                     break
                 case "P":
-                    currentEl.innerHTML += `<div class="piece wpawn"></div>`
+                    currentEl.innerHTML += `<div class="piece white pawn"></div>`
                     break
                 case "R":
-                    currentEl.innerHTML += `<div class="piece wrook"></div>`
+                    currentEl.innerHTML += `<div class="piece white rook"></div>`
                     break
                 case "N":
-                    currentEl.innerHTML += `<div class="piece wknight"></div>`
+                    currentEl.innerHTML += `<div class="piece white knight"></div>`
                     break
                 case "B":
-                    currentEl.innerHTML += `<div class="piece wbishop"></div>`
+                    currentEl.innerHTML += `<div class="piece white bishop"></div>`
                     break
                 case "Q":
-                    currentEl.innerHTML += `<div class="piece wqueen"></div>`
+                    currentEl.innerHTML += `<div class="piece white queen"></div>`
                     break
                 case "K":
-                    currentEl.innerHTML += `<div class="piece wking"></div>`
+                    currentEl.innerHTML += `<div class="piece white king"></div>`
                     break
                 default:
                     break
@@ -61,7 +61,7 @@ function render(fen) {
             continue
             // move to next row
         } else if (fenHolder[i] === " ") {
-            if (fenHolder[i+1] === "w") {
+            if (fenHolder[i + 1] === "w") {
                 currentPlayer = "white"
                 break
             } else {
@@ -76,64 +76,89 @@ function render(fen) {
 // start game
 
 const startPos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"
-
 function startGame() {
     render(startPos)
+    addPieceEventListener()
     document.getElementById("turnDisplayer").textContent = `It is ${currentPlayer}'s turn`
 }
-
 startGame()
+
+const squares = document.querySelectorAll(".square")
+
+function resetGame() {
+    squares.forEach(square => {
+        square.innerHTML = ""
+        square.removeEventListener("click", movePiece)
+    })
+    startGame()
+}
 
 // move pieces
 // select piece
-const pieces = document.querySelectorAll(".piece")
-pieces.forEach(piece => {
-    piece.addEventListener("click", selectPiece)
-})
+function addPieceEventListener() {
+    const pieces = document.querySelectorAll(".piece")
+    pieces.forEach(piece => {
+        piece.addEventListener("click", selectPiece)
+    })    
+}
+
+let currentPiece
 
 function selectPiece(event) {
     const selectedPiece = event.target
-    const selectedPieces = document.querySelectorAll(".selected")
-    selectedPieces.forEach(piece => {
+    const otherPieces = document.querySelectorAll(".selected")
+    otherPieces.forEach(piece => {
         piece.classList.remove("selected")
     })
     if (isCurrentPlayerPiece(selectedPiece)) {
         selectedPiece.classList.add("selected")
+        currentPiece = selectedPiece
     }
+
+    squares.forEach(square => {
+        square.addEventListener("click", movePiece)
+    })
+
 }
 
-// select square to move to
-const squares = document.querySelectorAll(".square")
-squares.forEach(square => {
-    square.addEventListener("click", movePiece)
-})
-
 function movePiece(event) {
-    const selectedPiece = document.querySelector(".selected")
-    if (isCurrentPlayerPiece(selectedPiece)) {
-        const targetSquare = event.target
-        // add if move valid
-        targetSquare.appendChild(selectedPiece)
-        selectedPiece.classList.remove("selected")
-        changeTurn()
-        document.getElementById("turnDisplayer").textContent = `It is ${currentPlayer}'s turn`
+    if (currentPiece !== null && isCurrentPlayerPiece(currentPiece)) {
+        const targetSquare = event.currentTarget
+        
+        if (targetSquare.classList.contains("square")) {
+            const pieceInTarget = targetSquare.firstChild
+            // if move valid
+            if (!pieceInTarget || isOpponentPiece(currentPiece, pieceInTarget)) {
+                if (pieceInTarget) {
+                    targetSquare.removeChild(pieceInTarget)
+                }
+
+                targetSquare.appendChild(currentPiece)
+                currentPiece.classList.remove("selected")
+                currentPiece = null
+
+                changeTurn()
+                document.getElementById("turnDisplayer").textContent = `It is ${currentPlayer}'s turn`
+            }
+        }
     }
 }
 
 // setting turns
-
-
 function changeTurn() {
     currentPlayer = currentPlayer === "white" ? "black" : "white"
 }
 
+
 function isCurrentPlayerPiece(piece) {
     let pieceColor
-    const whitePieces = ["wrook", "wknight", "wpawn", "wbishop", "wqueen", "wking"]
-    if (whitePieces.some(pieceName => piece.classList.contains(pieceName))) {
-        pieceColor = "white"
-    } else {
-        pieceColor = "black"
-    }
+    pieceColor = piece.classList.contains("white") ? "white" : "black"
     return pieceColor === currentPlayer
+}
+
+function isOpponentPiece(piece1, piece2) {
+    let isPiece1White = piece1.classList.contains("white") ? true : false
+    let isPiece2White = piece2.classList.contains("white") ? true : false
+
+    return isPiece1White !== isPiece2White
 }

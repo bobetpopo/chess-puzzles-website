@@ -1,6 +1,42 @@
+body {
+    background-color: #3B413C;
+}
+
 p {
     text-align: center;
-    margin-top: 50px;   
+    color: #F2F4F3;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 20px;
+
+    margin-top: 20px;   
+}
+
+#reset-btn {
+    display: block;
+    background-color: #129f4d;
+    font-size: 18px;
+    font-weight: bold;
+    color: #F2F4F3;
+    text-shadow: 0 0 2px black;
+    
+
+    margin: 40px auto;
+    border: 0 solid;
+    border-radius: 10px;
+    padding: 10px 30px;
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0);
+    outline: 1px solid;
+    outline-color: rgba(255, 255, 255, .5);
+    outline-offset: 0px;
+    transition: all 1250ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+#reset-btn:hover {
+    border: 1px solid;
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, .4), 0 0 20px rgba(255, 255, 255, .2);
+    outline-color: rgba(255, 255, 255, 0);
+    outline-offset: 15px;
+    text-shadow: 1px 1px 2px #427388;
 }
 
 .chessboard {
@@ -9,7 +45,7 @@ p {
     width: 560px;
     height: 560px;
 
-    margin: 30px auto;
+    margin: 20px auto;
 }
 
 .row {
@@ -40,55 +76,56 @@ p {
     cursor: grab;
 }
 
-.wpawn {
+.white.pawn {
     background-image: url(whitepieces/Wpawn.png);
 }
 
-.wrook {
+.white.rook {
     background-image: url(whitepieces/Wrook.png);
 }
 
-.wknight {
+.white.knight {
     background-image: url(whitepieces/Wknight.png);
 }
 
-.wbishop {
+.white.bishop {
     background-image: url(whitepieces/Wbishop.png);
 }
 
-.wking {
+.white.king {
     background-image: url(whitepieces/Wking.png);
 }
 
-.wqueen {
+.white.queen {
     background-image: url(whitepieces/Wqueen.png);
 }
 
-.bpawn {
+.black.pawn {
     background-image: url(blackpieces/Bpawn.png);
 }
 
-.brook {
+.black.rook {
     background-image: url(blackpieces/Brook.png);
 }
 
-.bknight {
+.black.knight {
     background-image: url(blackpieces/Bknight.png);
 }
 
-.bbishop {
+.black.bishop {
     background-image: url(blackpieces/Bbishop.png);
 }
 
-.bking {
+.black.king {
     background-image: url(blackpieces/Bking.png);
 }
 
-.bqueen {
+.black.queen {
     background-image: url(blackpieces/Bqueen.png);
 }
 
 .selected {
-    border: 3px solid #C8BFC7;
+    /* border: 3px solid #C8BFC7; */
+    border: 3px solid green;
     box-sizing: border-box;
 }
