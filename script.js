@@ -86,6 +86,7 @@ startGame()
 const squares = document.querySelectorAll(".square")
 
 function resetGame() {
+    clearValidMoves()
     squares.forEach(square => {
         square.innerHTML = ""
         square.removeEventListener("click", movePiece)
@@ -113,6 +114,19 @@ function selectPiece(event) {
     if (isCurrentPlayerPiece(selectedPiece)) {
         selectedPiece.classList.add("selected")
         currentPiece = selectedPiece
+
+        clearValidMoves()
+
+        const validMovesId = getValidPieceMoves(currentPiece)
+        let validMoves = []
+
+        validMovesId.forEach(id => {
+            validMoves.push(document.getElementById(id))
+        })
+
+        validMoves.forEach(square => {
+            square.classList.add("valid-target-square")
+        })
     }
 
     squares.forEach(square => {
@@ -127,8 +141,11 @@ function movePiece(event) {
         
         if (targetSquare.classList.contains("square")) {
             const pieceInTarget = targetSquare.firstChild
+            
+            const validMoves = getValidPieceMoves(currentPiece)
+            const isValid = validMoves.includes(targetSquare.id)
             // if move valid
-            if (!pieceInTarget || isOpponentPiece(currentPiece, pieceInTarget)) {
+            if (isValid && (!pieceInTarget || isOpponentPiece(currentPiece, pieceInTarget))) {
                 if (pieceInTarget) {
                     targetSquare.removeChild(pieceInTarget)
                 }
@@ -137,6 +154,7 @@ function movePiece(event) {
                 currentPiece.classList.remove("selected")
                 currentPiece = null
 
+                clearValidMoves()
                 changeTurn()
                 document.getElementById("turnDisplayer").textContent = `It is ${currentPlayer}'s turn`
             }
@@ -151,14 +169,205 @@ function changeTurn() {
 
 
 function isCurrentPlayerPiece(piece) {
-    let pieceColor
-    pieceColor = piece.classList.contains("white") ? "white" : "black"
+    const pieceColor = piece.classList.contains("white") ? "white" : "black"
     return pieceColor === currentPlayer
 }
 
 function isOpponentPiece(piece1, piece2) {
-    let isPiece1White = piece1.classList.contains("white") ? true : false
-    let isPiece2White = piece2.classList.contains("white") ? true : false
+    const isPiece1White = piece1.classList.contains("white")
+    const isPiece2White = piece2.classList.contains("white")
 
     return isPiece1White !== isPiece2White
+}
+
+// move validation
+function clearValidMoves() {
+    squares.forEach(square => {
+        square.classList.remove("valid-target-square")
+    })
+}
+
+function getValidPieceMoves(piece) {
+    if (piece.classList.contains("pawn")) {
+        return getValidPawnMoves(piece)
+    } else if (piece.classList.contains("knight")) {
+        return getValidKnightMoves(piece)
+    } else if (piece.classList.contains("rook")) {
+        return getValidRookMoves(piece)
+    } else if (piece.classList.contains("bishop")) {
+        return getValidBishopMoves(piece)
+    }
+
+}
+
+function getValidPawnMoves(piece) {
+    let validMoves = []
+    const isPieceWhite = piece.classList.contains("white")
+    
+    const move = isPieceWhite ? 1 : -1
+    const capture = isPieceWhite ? [-9, 11] : [-11, 9]
+    
+    const currentSquareId = piece.parentElement.id
+    const targetSquareId = parseInt(currentSquareId) + move
+    if (!document.getElementById(targetSquareId).firstChild) {
+        validMoves.push(targetSquareId.toString())
+
+        const currentRow = currentSquareId.charAt(currentSquareId.length - 1)
+        if (((!isPieceWhite && currentRow == "7") || (isPieceWhite && currentRow === "2")) 
+        && !document.getElementById(targetSquareId + move).firstChild) {
+            validMoves.push((targetSquareId + move).toString())
+        }
+
+    }
+
+    const captureSquaresIds = [
+        parseInt(currentSquareId) + parseInt(capture[0]), 
+        parseInt(currentSquareId) + parseInt(capture[1])
+    ]
+    
+    for (let i = 0; i < captureSquaresIds.length; i++) {
+        const captureSquaresId = document.getElementById(captureSquaresIds[i])
+        if (captureSquaresId && captureSquaresId.firstChild && isOpponentPiece(piece, captureSquaresId.firstChild)) {
+            
+            validMoves.push(captureSquaresIds[i].toString())
+        }
+    }
+    return validMoves
+}
+
+function getValidKnightMoves(piece) {
+    let validMoves = []
+    const moves = [-8, -19, -21, -12, 8, 19, 21, 12]
+
+    const currentSquareId = piece.parentElement.id
+
+    // create array with id of valid squares
+    let validSquaresIds = []
+    for (let i = 0; i < moves.length; i++) {
+            validSquaresIds.push(parseInt(currentSquareId) + moves[i])
+    }
+    for (let i = 0; i < validSquaresIds.length; i++) {
+        const validSquare = document.getElementById(validSquaresIds[i].toString())
+        if (validSquare && (!validSquare.firstChild || isOpponentPiece(piece, validSquare.firstChild))) {
+            validMoves.push(validSquare.id)
+        }
+    }
+    return validMoves
+}
+
+function getValidRookMoves(piece) {
+    let validMoves = []
+    const moves = {
+        up: [1, 2, 3, 4, 5, 6, 7],
+        down: [-1, -2, -3, -4, -5, -6, -7],
+        left: [-10, -20, -30, -40, -50, -60, -70],
+        right: [10, 20, 30, 40, 50, 60, 70]
+    }
+    const currentSquareId = piece.parentElement.id
+
+    let validSquaresUp = getAllValidSquares(currentSquareId, moves.up)
+    let validSquaresDown = getAllValidSquares(currentSquareId, moves.down)
+    let validSquaresLeft = getAllValidSquares(currentSquareId, moves.left)
+    let validSquaresRight = getAllValidSquares(currentSquareId, moves.right)
+
+    // remove squares if obstructed or out of bounds
+    removeWrongSquares(validSquaresUp)
+    removeWrongSquares(validSquaresDown)
+    removeWrongSquares(validSquaresLeft)
+    removeWrongSquares(validSquaresRight)
+   
+    // push squares to validMoves
+    validSquaresUp.forEach(square => {
+        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
+            validMoves.push(square.id)
+        }
+    })
+    validSquaresDown.forEach(square => {
+        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
+            validMoves.push(square.id)
+        }
+    })
+    validSquaresLeft.forEach(square => {
+        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
+            validMoves.push(square.id)
+        }
+    })
+    validSquaresRight.forEach(square => {
+        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
+            validMoves.push(square.id)
+        }
+    })
+    return validMoves
+}
+
+function getAllValidSquares(currentSquareId, direction) {
+    let allValidSquares = []
+    direction.forEach(move => {
+        const validSquareId = parseInt(currentSquareId) + move
+        allValidSquares.push(document.getElementById(validSquareId.toString()))
+    })
+    return allValidSquares
+}
+
+function removeWrongSquares(allValidSquares) {
+    for (let i = 0; i < allValidSquares.length; i++) {
+        if (allValidSquares[i]) {
+            if (allValidSquares[i].firstChild) {
+                let squaresToRemove = allValidSquares.length - i - 1
+                for (let j = 0; j < squaresToRemove; j++) {
+                    allValidSquares.pop()
+                }
+            }
+            continue
+        } else {
+            let squaresToRemove = allValidSquares.length - i - 1
+                for (let j = 0; j < squaresToRemove; j++) {
+                    allValidSquares.pop()
+                }
+        }
+    } 
+}
+
+
+function getValidBishopMoves(piece) {
+    let validMoves = []
+    const moves = {
+        nw: [-9, -18, -27, -36, -45, -54, -63],
+        ne: [11, 22, 33, 44, 55, 66, 77],
+        se: [9, 18, 27, 36, 45, 54, 63],
+        sw: [-11, -22, -33, -44, -55, -66, -77]
+    }
+    const currentSquareId = piece.parentElement.id
+
+    let validSquaresNW = getAllValidSquares(currentSquareId, moves.nw)
+    let validSquaresNE = getAllValidSquares(currentSquareId, moves.ne)
+    let validSquaresSE = getAllValidSquares(currentSquareId, moves.se)
+    let validSquaresSW = getAllValidSquares(currentSquareId, moves.sw)
+
+    removeWrongSquares(validSquaresNW)
+    removeWrongSquares(validSquaresNE)
+    removeWrongSquares(validSquaresSE)
+    removeWrongSquares(validSquaresSW)
+
+    validSquaresNW.forEach(square => {
+        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
+            validMoves.push(square.id)
+        }
+    })
+    validSquaresNE.forEach(square => {
+        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
+            validMoves.push(square.id)
+        }
+    })
+    validSquaresSE.forEach(square => {
+        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
+            validMoves.push(square.id)
+        }
+    })
+    validSquaresSW.forEach(square => {
+        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
+            validMoves.push(square.id)
+        }
+    })
+    return validMoves
 }

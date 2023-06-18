@@ -67,6 +67,14 @@ p {
     background-color: #b58863;
 }
 
+.valid-target-square.light {
+    background-color: #ed9200;
+}
+
+.valid-target-square.dark {
+    background-color: #b85300;
+}
+
 .piece {
     width: 70px;
     height: 70px;
@@ -129,3 +137,4 @@ p {
     border: 3px solid green;
     box-sizing: border-box;
 }
+
