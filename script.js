@@ -196,6 +196,10 @@ function getValidPieceMoves(piece) {
         return getValidRookMoves(piece)
     } else if (piece.classList.contains("bishop")) {
         return getValidBishopMoves(piece)
+    } else if (piece.classList.contains("queen")) {
+        return getValidRookMoves(piece).concat(getValidBishopMoves(piece))
+    } else if (piece.classList.contains("king")) {
+        return getValidKingMoves(piece)
     }
 
 }
@@ -238,20 +242,16 @@ function getValidPawnMoves(piece) {
 function getValidKnightMoves(piece) {
     let validMoves = []
     const moves = [-8, -19, -21, -12, 8, 19, 21, 12]
-
     const currentSquareId = piece.parentElement.id
 
     // create array with id of valid squares
-    let validSquaresIds = []
-    for (let i = 0; i < moves.length; i++) {
-            validSquaresIds.push(parseInt(currentSquareId) + moves[i])
-    }
-    for (let i = 0; i < validSquaresIds.length; i++) {
-        const validSquare = document.getElementById(validSquaresIds[i].toString())
-        if (validSquare && (!validSquare.firstChild || isOpponentPiece(piece, validSquare.firstChild))) {
-            validMoves.push(validSquare.id)
+    let validSquares = getAllValidSquares(currentSquareId, moves)
+
+    validSquares.forEach(square => {
+        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
+            validMoves.push(square.id)
         }
-    }
+    })
     return validMoves
 }
 
@@ -300,35 +300,6 @@ function getValidRookMoves(piece) {
     return validMoves
 }
 
-function getAllValidSquares(currentSquareId, direction) {
-    let allValidSquares = []
-    direction.forEach(move => {
-        const validSquareId = parseInt(currentSquareId) + move
-        allValidSquares.push(document.getElementById(validSquareId.toString()))
-    })
-    return allValidSquares
-}
-
-function removeWrongSquares(allValidSquares) {
-    for (let i = 0; i < allValidSquares.length; i++) {
-        if (allValidSquares[i]) {
-            if (allValidSquares[i].firstChild) {
-                let squaresToRemove = allValidSquares.length - i - 1
-                for (let j = 0; j < squaresToRemove; j++) {
-                    allValidSquares.pop()
-                }
-            }
-            continue
-        } else {
-            let squaresToRemove = allValidSquares.length - i - 1
-                for (let j = 0; j < squaresToRemove; j++) {
-                    allValidSquares.pop()
-                }
-        }
-    } 
-}
-
-
 function getValidBishopMoves(piece) {
     let validMoves = []
     const moves = {
@@ -370,4 +341,47 @@ function getValidBishopMoves(piece) {
         }
     })
     return validMoves
+}
+
+function getValidKingMoves(piece) {
+    let validMoves = []
+    const moves = [-9, 1, 11, 10, 9, -1, -11, -10]
+    const currentSquareId = piece.parentElement.id
+
+    let validSquares = getAllValidSquares(currentSquareId, moves)
+
+    validSquares.forEach(square => {
+        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
+            validMoves.push(square.id)
+        }
+    })
+    return validMoves
+}
+
+function getAllValidSquares(currentSquareId, direction) {
+    let allValidSquares = []
+    direction.forEach(move => {
+        const validSquareId = parseInt(currentSquareId) + move
+        allValidSquares.push(document.getElementById(validSquareId.toString()))
+    })
+    return allValidSquares
+}
+
+function removeWrongSquares(allValidSquares) {
+    for (let i = 0; i < allValidSquares.length; i++) {
+        if (allValidSquares[i]) {
+            if (allValidSquares[i].firstChild) {
+                let squaresToRemove = allValidSquares.length - i - 1
+                for (let j = 0; j < squaresToRemove; j++) {
+                    allValidSquares.pop()
+                }
+            }
+            continue
+        } else {
+            let squaresToRemove = allValidSquares.length - i - 1
+                for (let j = 0; j < squaresToRemove; j++) {
+                    allValidSquares.pop()
+                }
+        }
+    } 
 }
