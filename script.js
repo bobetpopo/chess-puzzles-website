@@ -100,7 +100,7 @@ function addPieceEventListener() {
     const pieces = document.querySelectorAll(".piece")
     pieces.forEach(piece => {
         piece.addEventListener("click", selectPiece)
-    })    
+    })
 }
 
 let currentPiece
@@ -138,10 +138,10 @@ function selectPiece(event) {
 function movePiece(event) {
     if (currentPiece !== null && isCurrentPlayerPiece(currentPiece)) {
         const targetSquare = event.currentTarget
-        
+
         if (targetSquare.classList.contains("square")) {
             const pieceInTarget = targetSquare.firstChild
-            
+
             const validMoves = getValidPieceMoves(currentPiece)
             const isValid = validMoves.includes(targetSquare.id)
             // if move valid
@@ -149,10 +149,26 @@ function movePiece(event) {
                 if (pieceInTarget) {
                     targetSquare.removeChild(pieceInTarget)
                 }
+                //check for pawn promotion
+                if (currentPiece.classList.contains("pawn")) {
+                    const promotionRow = currentPlayer === "white" ? "8" : "1"
+                    const targetRow = targetSquare.id.charAt(1)
+                    if (targetRow === promotionRow) {
+                        promotePawn(targetSquare)
+                        currentPiece.parentElement.innerHTML = ""
+                        
+                    } else {
+                        targetSquare.appendChild(currentPiece)
+                    }
+                } else {
+                    // for all other pieces
+                    targetSquare.appendChild(currentPiece)
+                }
 
-                targetSquare.appendChild(currentPiece)
+
                 currentPiece.classList.remove("selected")
                 currentPiece = null
+      
 
                 clearValidMoves()
                 changeTurn()
@@ -203,40 +219,67 @@ function getValidPieceMoves(piece) {
     }
 
 }
+/*
 
+*/
 function getValidPawnMoves(piece) {
     let validMoves = []
     const isPieceWhite = piece.classList.contains("white")
-    
+
     const move = isPieceWhite ? 1 : -1
     const capture = isPieceWhite ? [-9, 11] : [-11, 9]
-    
+
     const currentSquareId = piece.parentElement.id
     const targetSquareId = parseInt(currentSquareId) + move
     if (!document.getElementById(targetSquareId).firstChild) {
         validMoves.push(targetSquareId.toString())
 
-        const currentRow = currentSquareId.charAt(currentSquareId.length - 1)
-        if (((!isPieceWhite && currentRow == "7") || (isPieceWhite && currentRow === "2")) 
-        && !document.getElementById(targetSquareId + move).firstChild) {
+        const currentRow = currentSquareId.charAt(1)
+        if (((!isPieceWhite && currentRow == "7") || (isPieceWhite && currentRow === "2"))
+            && !document.getElementById(targetSquareId + move).firstChild) {
             validMoves.push((targetSquareId + move).toString())
         }
 
     }
 
     const captureSquaresIds = [
-        parseInt(currentSquareId) + parseInt(capture[0]), 
+        parseInt(currentSquareId) + parseInt(capture[0]),
         parseInt(currentSquareId) + parseInt(capture[1])
     ]
-    
+
     for (let i = 0; i < captureSquaresIds.length; i++) {
         const captureSquaresId = document.getElementById(captureSquaresIds[i])
         if (captureSquaresId && captureSquaresId.firstChild && isOpponentPiece(piece, captureSquaresId.firstChild)) {
-            
+
             validMoves.push(captureSquaresIds[i].toString())
         }
     }
     return validMoves
+}
+
+// pawn promotion
+function promotePawn(promotionSquare) {
+    document.getElementById("box").style.display="flex"
+    const selectorPieces = document.querySelectorAll(".selector")
+    selectorPieces.forEach(piece => {
+        piece.classList.remove("white", "black")
+        if (currentPlayer === "white") {
+            piece.classList.add("white")
+        } else {
+            piece.classList.add("black")
+        }
+        piece.addEventListener("click", function() {
+            let newPiece = document.createElement("div")
+            newPiece.className = piece.className
+            newPiece.classList.remove("selector")
+            
+            document.getElementById("box").style.display="none"
+            promotionSquare.appendChild(newPiece)
+            addPieceEventListener()
+
+            promotionSquare = null
+        })
+    })
 }
 
 function getValidKnightMoves(piece) {
@@ -275,7 +318,7 @@ function getValidRookMoves(piece) {
     removeWrongSquares(validSquaresDown)
     removeWrongSquares(validSquaresLeft)
     removeWrongSquares(validSquaresRight)
-   
+
     // push squares to validMoves
     validSquaresUp.forEach(square => {
         if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
@@ -358,6 +401,10 @@ function getValidKingMoves(piece) {
     return validMoves
 }
 
+function isCastleAvailable(piece) {
+    const isPieceWhite = piece.classList.contains("white")
+}
+
 function getAllValidSquares(currentSquareId, direction) {
     let allValidSquares = []
     direction.forEach(move => {
@@ -379,9 +426,9 @@ function removeWrongSquares(allValidSquares) {
             continue
         } else {
             let squaresToRemove = allValidSquares.length - i - 1
-                for (let j = 0; j < squaresToRemove; j++) {
-                    allValidSquares.pop()
-                }
+            for (let j = 0; j < squaresToRemove; j++) {
+                allValidSquares.pop()
+            }
         }
-    } 
+    }
 }
