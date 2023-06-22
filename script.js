@@ -1,5 +1,10 @@
 let fenHolder = ""
 let currentPlayer
+// const moveSound = new Audio('sounds/move-self.mp3')
+// const captureSound = new Audio('sounds/capture.mp3')
+document.getElementById("turnDisplayer").addEventListener("click", function() {
+    console.log(isInCheck(currentPlayer))
+})
 
 function render(fen) {
     fenHolder += fen
@@ -92,6 +97,7 @@ function resetGame() {
         square.removeEventListener("click", movePiece)
     })
     startGame()
+    removeCheckIndicator()
 }
 
 // move pieces
@@ -103,6 +109,13 @@ function addPieceEventListener() {
     })
 }
 
+function removePieceEventListener() {
+    const pieces = document.querySelectorAll(".piece")
+    pieces.forEach(piece => {
+        piece.removeEventListener("click", selectPiece)
+    })
+}
+
 let currentPiece
 
 function selectPiece(event) {
@@ -111,15 +124,22 @@ function selectPiece(event) {
     otherPieces.forEach(piece => {
         piece.classList.remove("selected")
     })
+    
     if (isCurrentPlayerPiece(selectedPiece)) {
         selectedPiece.classList.add("selected")
         currentPiece = selectedPiece
-
         clearValidMoves()
 
-        const validMovesId = getValidPieceMoves(currentPiece)
-        let validMoves = []
+        let validMovesId
+        validMovesId = isInCheck(currentPlayer) ? getValidMovesInCheck(currentPiece) : getValidPieceMoves(currentPiece)
+        for (let i = 0; i < validMovesId.length; i++) {
+            if ((exposesKing(currentPiece, validMovesId[i]))) {
+                validMovesId.splice(i, 1)
+                i--
+            }
+        }
 
+        let validMoves = []
         validMovesId.forEach(id => {
             validMoves.push(document.getElementById(id))
         })
@@ -132,7 +152,6 @@ function selectPiece(event) {
     squares.forEach(square => {
         square.addEventListener("click", movePiece)
     })
-
 }
 
 function movePiece(event) {
@@ -142,12 +161,21 @@ function movePiece(event) {
         if (targetSquare.classList.contains("square")) {
             const pieceInTarget = targetSquare.firstChild
 
-            const validMoves = getValidPieceMoves(currentPiece)
-            const isValid = validMoves.includes(targetSquare.id)
+            // checks
+            const validMovesId = isInCheck(currentPlayer) ? getValidMovesInCheck(currentPiece) : getValidPieceMoves(currentPiece)
+            // pins
+            for (let i = 0; i < validMovesId.length; i++) {
+                if ((exposesKing(currentPiece, validMovesId[i]))) {
+                    validMovesId.splice(i, 1)
+                    i--
+                }
+            }
+            const isValid = validMovesId.includes(targetSquare.id)
             // if move valid
             if (isValid && (!pieceInTarget || isOpponentPiece(currentPiece, pieceInTarget))) {
                 if (pieceInTarget) {
                     targetSquare.removeChild(pieceInTarget)
+                    // captureSound.play()
                 }
                 //check for pawn promotion
                 if (currentPiece.classList.contains("pawn")) {
@@ -156,23 +184,21 @@ function movePiece(event) {
                     if (targetRow === promotionRow) {
                         promotePawn(targetSquare)
                         currentPiece.parentElement.innerHTML = ""
-                        
                     } else {
                         targetSquare.appendChild(currentPiece)
+                        // moveSound.play()
                     }
                 } else {
                     // for all other pieces
                     targetSquare.appendChild(currentPiece)
+                    // moveSound.play()
                 }
-
-
                 currentPiece.classList.remove("selected")
-                currentPiece = null
-      
-
+   
                 clearValidMoves()
                 changeTurn()
                 document.getElementById("turnDisplayer").textContent = `It is ${currentPlayer}'s turn`
+                handleCheck(currentPlayer)
             }
         }
     }
@@ -219,9 +245,7 @@ function getValidPieceMoves(piece) {
     }
 
 }
-/*
 
-*/
 function getValidPawnMoves(piece) {
     let validMoves = []
     const isPieceWhite = piece.classList.contains("white")
@@ -254,32 +278,9 @@ function getValidPawnMoves(piece) {
             validMoves.push(captureSquaresIds[i].toString())
         }
     }
+
+    
     return validMoves
-}
-
-// pawn promotion
-function promotePawn(promotionSquare) {
-    document.getElementById("box").style.display="flex"
-    const selectorPieces = document.querySelectorAll(".selector")
-    selectorPieces.forEach(piece => {
-        piece.classList.remove("white", "black")
-        if (currentPlayer === "white") {
-            piece.classList.add("white")
-        } else {
-            piece.classList.add("black")
-        }
-        piece.addEventListener("click", function() {
-            let newPiece = document.createElement("div")
-            newPiece.className = piece.className
-            newPiece.classList.remove("selector")
-            
-            document.getElementById("box").style.display="none"
-            promotionSquare.appendChild(newPiece)
-            addPieceEventListener()
-
-            promotionSquare = null
-        })
-    })
 }
 
 function getValidKnightMoves(piece) {
@@ -308,38 +309,23 @@ function getValidRookMoves(piece) {
     }
     const currentSquareId = piece.parentElement.id
 
-    let validSquaresUp = getAllValidSquares(currentSquareId, moves.up)
-    let validSquaresDown = getAllValidSquares(currentSquareId, moves.down)
-    let validSquaresLeft = getAllValidSquares(currentSquareId, moves.left)
-    let validSquaresRight = getAllValidSquares(currentSquareId, moves.right)
+    const validSquares = {
+        up: getAllValidSquares(currentSquareId, moves.up),
+        down: getAllValidSquares(currentSquareId, moves.down),
+        left: getAllValidSquares(currentSquareId, moves.left),
+        right: getAllValidSquares(currentSquareId, moves.right)
+    }
 
-    // remove squares if obstructed or out of bounds
-    removeWrongSquares(validSquaresUp)
-    removeWrongSquares(validSquaresDown)
-    removeWrongSquares(validSquaresLeft)
-    removeWrongSquares(validSquaresRight)
+    const directions = Object.values(validSquares)
+    directions.forEach(direction => {
+        removeWrongSquares(direction)
+        direction.forEach(square => {
+            if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
+                validMoves.push(square.id)
+            }
+        })
+    })
 
-    // push squares to validMoves
-    validSquaresUp.forEach(square => {
-        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
-            validMoves.push(square.id)
-        }
-    })
-    validSquaresDown.forEach(square => {
-        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
-            validMoves.push(square.id)
-        }
-    })
-    validSquaresLeft.forEach(square => {
-        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
-            validMoves.push(square.id)
-        }
-    })
-    validSquaresRight.forEach(square => {
-        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
-            validMoves.push(square.id)
-        }
-    })
     return validMoves
 }
 
@@ -353,36 +339,23 @@ function getValidBishopMoves(piece) {
     }
     const currentSquareId = piece.parentElement.id
 
-    let validSquaresNW = getAllValidSquares(currentSquareId, moves.nw)
-    let validSquaresNE = getAllValidSquares(currentSquareId, moves.ne)
-    let validSquaresSE = getAllValidSquares(currentSquareId, moves.se)
-    let validSquaresSW = getAllValidSquares(currentSquareId, moves.sw)
+    const validSquares = {
+        nw: getAllValidSquares(currentSquareId, moves.nw),
+        ne: getAllValidSquares(currentSquareId, moves.ne),
+        se: getAllValidSquares(currentSquareId, moves.se),
+        sw: getAllValidSquares(currentSquareId, moves.sw)
+    }
+    
+    const directions = Object.values(validSquares)
+    directions.forEach(direction => {
+        removeWrongSquares(direction)
+        direction.forEach(square => {
+            if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
+                validMoves.push(square.id)
+            }
+        })
+    })
 
-    removeWrongSquares(validSquaresNW)
-    removeWrongSquares(validSquaresNE)
-    removeWrongSquares(validSquaresSE)
-    removeWrongSquares(validSquaresSW)
-
-    validSquaresNW.forEach(square => {
-        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
-            validMoves.push(square.id)
-        }
-    })
-    validSquaresNE.forEach(square => {
-        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
-            validMoves.push(square.id)
-        }
-    })
-    validSquaresSE.forEach(square => {
-        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
-            validMoves.push(square.id)
-        }
-    })
-    validSquaresSW.forEach(square => {
-        if (square && (!square.firstChild || isOpponentPiece(piece, square.firstChild))) {
-            validMoves.push(square.id)
-        }
-    })
     return validMoves
 }
 
@@ -399,10 +372,6 @@ function getValidKingMoves(piece) {
         }
     })
     return validMoves
-}
-
-function isCastleAvailable(piece) {
-    const isPieceWhite = piece.classList.contains("white")
 }
 
 function getAllValidSquares(currentSquareId, direction) {
@@ -431,4 +400,159 @@ function removeWrongSquares(allValidSquares) {
             }
         }
     }
+}
+
+// pawn promotion
+function promotePawn(promotionSquare) {
+    document.getElementById("box").style.display="flex"
+    removePieceEventListener()
+
+    const selectorPieces = document.querySelectorAll(".selector")
+    selectorPieces.forEach(piece => {
+        piece.classList.remove("white", "black")
+        currentPlayer === "white" ? piece.classList.add("white") : piece.classList.add("black")
+
+        piece.addEventListener("click", function() {
+            let newPiece = document.createElement("div")
+            newPiece.className = piece.className
+            newPiece.classList.remove("selector")
+            
+            document.getElementById("box").style.display="none"
+            if (newPiece) {
+                promotionSquare.appendChild(newPiece)
+            }
+            addPieceEventListener()
+            promotionSquare = null
+
+            const opponent = currentPlayer === "white" ? "black" : "white"
+            if (isInCheck(currentPlayer)) {
+                addCheckIndicator(currentPlayer)
+            }
+        })
+    })
+
+    
+}
+
+// check logic
+function handleCheck(player) {
+    if (isInCheck(player)) {
+        addCheckIndicator(player)
+        if (isCheckmate(player)) {
+            endGame()
+        }
+    } else {
+        removeCheckIndicator()
+    }
+}
+
+function addCheckIndicator(player) {
+    const kingSquare = document.querySelector(`.${player}.king`).parentElement
+    kingSquare.style.backgroundColor="red"
+}
+
+function removeCheckIndicator() {
+    const squares = document.querySelectorAll(".square")
+    squares.forEach(square => {
+        square.style.backgroundColor = null
+    })
+}
+
+function isInCheck(currentPlayer) {
+    const kingSquareId = document.querySelector(`.${currentPlayer}.king`).parentElement.id
+    const opponent = currentPlayer === "white" ? "black" : "white"
+
+    const opponentPieces = document.querySelectorAll(`.piece.${opponent}`)
+    for (let i = 0; i < opponentPieces.length; i++) {
+        const validMoves = getValidPieceMoves(opponentPieces[i])
+        if (validMoves.includes(kingSquareId.toString())) {
+            return true
+        }
+    }
+    return false
+}
+
+function getValidMovesInCheck(piece) {
+    let validMovesInCheck = getValidPieceMoves(piece)
+    
+    for (let i = 0; i < validMovesInCheck.length; i++) {
+        if (!stopsCheck(piece, validMovesInCheck[i])) {
+            validMovesInCheck.splice(i, 1)
+            i--
+        }
+    }
+    
+    return validMovesInCheck
+}
+
+function stopsCheck(piece, move) {
+    const currentSquare = piece.parentElement
+    const targetSquare = document.getElementById(move)
+    const targetPiece = targetSquare.firstChild
+
+    if (targetPiece) {
+        targetSquare.removeChild(targetPiece)
+    }
+
+    targetSquare.appendChild(piece)
+
+    if (!isInCheck(currentPlayer)) {
+        // avoids check
+        if (targetPiece) {
+            targetSquare.appendChild(targetPiece)
+        }
+        currentSquare.appendChild(piece)
+        return true
+    } else {
+        if (targetPiece) {
+            targetSquare.appendChild(targetPiece)
+        }
+        currentSquare.appendChild(piece)
+        return false
+    }
+}
+
+function isCheckmate(player) {
+    const pieces = document.querySelectorAll(`.${player}.piece`)
+    let allMoves = []
+    for (let i = 0; i < pieces.length; i++) {
+        const currentPieceMoves = getValidMovesInCheck(pieces[i])
+        allMoves = allMoves.concat(currentPieceMoves)
+    }
+    if (!allMoves[0]) {
+        return true
+    }    
+    return false
+}
+
+function exposesKing(piece, move) {
+    const currentSquare = piece.parentElement
+    const targetSquare = document.getElementById(move)
+    const targetPiece = targetSquare.firstChild
+
+    if (targetPiece) {
+        targetSquare.removeChild(targetPiece)
+    }
+
+    targetSquare.appendChild(piece)
+
+    if (!isInCheck(currentPlayer)) {
+        if (targetPiece) {
+            targetSquare.appendChild(targetPiece)
+        }
+        currentSquare.appendChild(piece)
+        return false
+    } else {
+        if (targetPiece) {
+            targetSquare.appendChild(targetPiece)
+        }
+        currentSquare.appendChild(piece)
+        return true
+    }
+}
+
+function endGame() {
+    const winner = currentPlayer === "white" ? "Black" : "White"
+    removePieceEventListener()
+    document.getElementById("turnDisplayer").textContent = `${winner} wins!`
 }
