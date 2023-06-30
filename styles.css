@@ -147,7 +147,6 @@ p {
     left: 35%;
     right: 35%;
 
-
     width: 30%;
     height: 30%;
     background-color: rgba(142, 140, 139, 0.522);
@@ -162,8 +161,8 @@ p {
 }
 
 .selector.piece {
-    width: 48%;
-    height: 48%;
+    width: 47%;
+    height: 47%;
 }
 
 .selected {
