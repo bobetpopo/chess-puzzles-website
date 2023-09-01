@@ -2,115 +2,140 @@
 <html>
 
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css">
     <link rel="shortcut icon" href="#">
     <link rel="icon" type="image/png" href="blackpieces/Bknight.png">
-    
+
     <title>Chess puzzles</title>
 </head>
 
 <body>
-    <p id="turnDisplayer"></p>
-    <div class="chessboard">
-        <div id="box">
-            <div class="selector piece queen"></div>
-            <div class="selector piece rook"></div>
-            <div class="selector piece bishop"></div>
-            <div class="selector piece knight"></div>
-        </div>
-        <div class="row" id="row8">
-            <div id="18" class="square light"></div>
-            <div id="28" class="square dark"></div>
-            <div id="38" class="square light"></div>
-            <div id="48" class="square dark"></div>
-            <div id="58" class="square light"></div>
-            <div id="68" class="square dark"></div>
-            <div id="78" class="square light"></div>
-            <div id="88" class="square dark"></div>
-        </div>
+    <div id="game-window">
+        <div id="chessboard">
+            <div id="box">
+                <div class="selector piece queen"></div>
+                <div class="selector piece rook"></div>
+                <div class="selector piece bishop"></div>
+                <div class="selector piece knight"></div>
+            </div>
+            <div class="row" id="row8">
+                <div id="18" class="square light"></div>
+                <div id="28" class="square dark"></div>
+                <div id="38" class="square light"></div>
+                <div id="48" class="square dark"></div>
+                <div id="58" class="square light"></div>
+                <div id="68" class="square dark"></div>
+                <div id="78" class="square light"></div>
+                <div id="88" class="square dark"></div>
+            </div>
 
-        <div class="row" id="row7">
-            <div id="17" class="square dark"></div>
-            <div id="27" class="square light"></div>
-            <div id="37" class="square dark"></div>
-            <div id="47" class="square light"></div>
-            <div id="57" class="square dark"></div>
-            <div id="67" class="square light"></div>
-            <div id="77" class="square dark"></div>
-            <div id="87" class="square light"></div>
-        </div>
+            <div class="row" id="row7">
+                <div id="17" class="square dark"></div>
+                <div id="27" class="square light"></div>
+                <div id="37" class="square dark"></div>
+                <div id="47" class="square light"></div>
+                <div id="57" class="square dark"></div>
+                <div id="67" class="square light"></div>
+                <div id="77" class="square dark"></div>
+                <div id="87" class="square light"></div>
+            </div>
 
-        <div class="row" id="row6">
-            <div id="16" class="square light"></div>
-            <div id="26" class="square dark"></div>
-            <div id="36" class="square light"></div>
-            <div id="46" class="square dark"></div>
-            <div id="56" class="square light"></div>
-            <div id="66" class="square dark"></div>
-            <div id="76" class="square light"></div>
-            <div id="86" class="square dark"></div>
-        </div>
+            <div class="row" id="row6">
+                <div id="16" class="square light"></div>
+                <div id="26" class="square dark"></div>
+                <div id="36" class="square light"></div>
+                <div id="46" class="square dark"></div>
+                <div id="56" class="square light"></div>
+                <div id="66" class="square dark"></div>
+                <div id="76" class="square light"></div>
+                <div id="86" class="square dark"></div>
+            </div>
 
-        <div class="row" id="row5">
-            <div id="15" class="square dark"></div>
-            <div id="25" class="square light"></div>
-            <div id="35" class="square dark"></div>
-            <div id="45" class="square light"></div>
-            <div id="55" class="square dark"></div>
-            <div id="65" class="square light"></div>
-            <div id="75" class="square dark"></div>
-            <div id="85" class="square light"></div>
-        </div>
+            <div class="row" id="row5">
+                <div id="15" class="square dark"></div>
+                <div id="25" class="square light"></div>
+                <div id="35" class="square dark"></div>
+                <div id="45" class="square light"></div>
+                <div id="55" class="square dark"></div>
+                <div id="65" class="square light"></div>
+                <div id="75" class="square dark"></div>
+                <div id="85" class="square light"></div>
+            </div>
 
-        <div class="row" id="row4">
-            <div id="14" class="square light"></div>
-            <div id="24" class="square dark"></div>
-            <div id="34" class="square light"></div>
-            <div id="44" class="square dark"></div>
-            <div id="54" class="square light"></div>
-            <div id="64" class="square dark"></div>
-            <div id="74" class="square light"></div>
-            <div id="84" class="square dark"></div>
-        </div>
+            <div class="row" id="row4">
+                <div id="14" class="square light"></div>
+                <div id="24" class="square dark"></div>
+                <div id="34" class="square light"></div>
+                <div id="44" class="square dark"></div>
+                <div id="54" class="square light"></div>
+                <div id="64" class="square dark"></div>
+                <div id="74" class="square light"></div>
+                <div id="84" class="square dark"></div>
+            </div>
 
-        <div class="row" id="row3">
-            <div id="13" class="square dark"></div>
-            <div id="23" class="square light"></div>
-            <div id="33" class="square dark"></div>
-            <div id="43" class="square light"></div>
-            <div id="53" class="square dark"></div>
-            <div id="63" class="square light"></div>
-            <div id="73" class="square dark"></div>
-            <div id="83" class="square light"></div>
-        </div>
+            <div class="row" id="row3">
+                <div id="13" class="square dark"></div>
+                <div id="23" class="square light"></div>
+                <div id="33" class="square dark"></div>
+                <div id="43" class="square light"></div>
+                <div id="53" class="square dark"></div>
+                <div id="63" class="square light"></div>
+                <div id="73" class="square dark"></div>
+                <div id="83" class="square light"></div>
+            </div>
 
-        <div class="row" id="row2">
-            <div id="12" class="square light"></div>
-            <div id="22" class="square dark"></div>
-            <div id="32" class="square light"></div>
-            <div id="42" class="square dark"></div>
-            <div id="52" class="square light"></div>
-            <div id="62" class="square dark"></div>
-            <div id="72" class="square light"></div>
-            <div id="82" class="square dark"></div>
-        </div>
+            <div class="row" id="row2">
+                <div id="12" class="square light"></div>
+                <div id="22" class="square dark"></div>
+                <div id="32" class="square light"></div>
+                <div id="42" class="square dark"></div>
+                <div id="52" class="square light"></div>
+                <div id="62" class="square dark"></div>
+                <div id="72" class="square light"></div>
+                <div id="82" class="square dark"></div>
+            </div>
 
-        <div class="row" id="row1">
-            <div id="11" class="square dark"></div>
-            <div id="21" class="square light"></div>
-            <div id="31" class="square dark"></div>
-            <div id="41" class="square light"></div>
-            <div id="51" class="square dark"></div>
-            <div id="61" class="square light"></div>
-            <div id="71" class="square dark"></div>
-            <div id="81" class="square light"></div>
+            <div class="row" id="row1">
+                <div id="11" class="square dark"></div>
+                <div id="21" class="square light"></div>
+                <div id="31" class="square dark"></div>
+                <div id="41" class="square light"></div>
+                <div id="51" class="square dark"></div>
+                <div id="61" class="square light"></div>
+                <div id="71" class="square dark"></div>
+                <div id="81" class="square light"></div>
+            </div>
+        </div>
+        <div id="side-display">
+            <div id="turn-displayer">
+                <div id="turn-displayer-div"></div>
+                <p id="turn-displayer-text"></p>
+            </div>
+            <div id="move-displayer">
+                <div id="move-num-displayer"></div>
+                <div id="move-textfield-white" class="move-textfield"></div>
+                <div id="move-textfield-black" class="move-textfield"></div>
+            </div>
+            <div id="game-btn-container">
+                <button id="reset-btn" onclick="resetGame()">RESET</button>
+                <button id="random-btn" onclick="randomPuzzle()">Get Puzzle</button>
+            </div>
+            
         </div>
     </div>
-    <button id="reset-btn" onclick="resetGame()">RESET</button>
-    <button id="random-btn" onclick="randomPuzzle()">Get random Puzzle</button>
-    <script src="script.js"></script>
+
+
+
+    <script src="gameLogic.js"></script>
+    <script src="gameSetup.js"></script>
+    <script src="moveTracker.js"></script>
     <script src="puzzleHandler.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
