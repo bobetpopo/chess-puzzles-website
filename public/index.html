@@ -119,18 +119,30 @@
                 <div id="move-textfield-black" class="move-textfield"></div>
             </div>
             <div id="game-btn-container">
-                <button id="reset-btn" onclick="resetGame()">RESET</button>
-                <button id="random-btn" onclick="randomPuzzle()">Get Puzzle</button>
+                <button class="btn btn-primary" id="reset-btn" onclick="resetGame()">
+                    &#10226;
+                </button>
+                <button class="btn btn-primary" id="rewind-move-btn" onclick="rewindMove()">
+                    &#8630;
+                </button>
+                <button class="btn btn-primary" id="next-move-btn" onclick="nextMove()">
+                    &#8631;
+                </button>
+                <button class="btn btn-primary" id="random-btn" onclick="randomPuzzle()">
+                    Get Puzzle
+                </button>
             </div>
             
         </div>
     </div>
 
+    <button id="test-btn">TEST</button>
+
 
 
     <script src="gameLogic.js"></script>
-    <script src="gameSetup.js"></script>
     <script src="moveTracker.js"></script>
+    <script src="gameSetup.js"></script>
     <script src="puzzleHandler.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"

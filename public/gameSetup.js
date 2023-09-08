@@ -1,11 +1,13 @@
 const startPos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"
 
+
 // start game
 startGame(startPos)
 function startGame(fen) {
     render(fen)
     addPieceEventListener()
     displayTurn()
+    logFEN()
 }
 
 function clearBoard() {
@@ -15,6 +17,7 @@ function clearBoard() {
         square.removeEventListener("click", movePiece)
     })
     removeCheckIndicator()
+    removeMoveIndicator()
 }
 
 function resetGame() {

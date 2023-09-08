@@ -123,8 +123,8 @@ function movePiece(event) {
             changeTurn()
             handleCheck(currentPlayer)
 
-            
             logMove(currentPiece, currentSquare, targetSquare, isCapture)
+            addMoveIndicator(currentSquare, targetSquare)
         }
     }
 }
@@ -142,9 +142,22 @@ function displayTurn() {
     turnDisplayerDiv = document.getElementById("turn-displayer-div")
     const imgUrl = currentPlayer === "white" ? "whitepieces/Wpawn.png" : "blackpieces/Bpawn.png"
     turnDisplayerDiv.innerHTML = `<img src="${imgUrl}" alt="${currentPlayer}-icon" id="turn-displayer-icon"></img>`
-
 }
 
+// show trail for piece that just moved
+function addMoveIndicator(currentSquare, targetSquare) {
+    removeMoveIndicator()
+    currentSquare.classList.add("just-moved")
+    targetSquare.classList.add("just-moved")
+}
+
+function removeMoveIndicator() {
+    squares.forEach(square => {
+        square.classList.remove("just-moved")
+    })
+}
+
+// logic
 function isCurrentPlayerPiece(piece) {
     const pieceColor = piece.classList.contains("white") ? "white" : "black"
     return pieceColor === currentPlayer
@@ -428,7 +441,7 @@ function handleCheck(player) {
 
 function addCheckIndicator(player) {
     const kingSquare = document.querySelector(`.${ player }.king`).parentElement
-    kingSquare.style.backgroundColor = "red"
+    kingSquare.style.backgroundColor = "#E31E32"
 }
 
 function removeCheckIndicator() {
@@ -599,10 +612,12 @@ function isCastleMove(king, targetSquare) {
     const targetSquareId = targetSquare.id
     const difference = parseInt(targetSquareId) - parseInt(kingSquareId)
 
-    if (difference === 20 || difference === -20) {
-        return true
+    if (difference === 20) {
+        return "kingside"
+    } else if (difference === -20) {
+        return "queenside"
     }
-    return false
+    return ""
 }
 
 function handleCastle(king, targetSquare) {
@@ -627,5 +642,10 @@ function handleCastle(king, targetSquare) {
 function endGame() {
     const winner = currentPlayer === "white" ? "Black" : "White"
     removePieceEventListener()
+
+    //update turn displayer to display win message
     document.getElementById("turn-displayer-text").textContent = `${ winner } wins!`
+    turnDisplayerDiv = document.getElementById("turn-displayer-div")
+    const imgUrl = winner === "White" ? "whitepieces/Wking.png" : "blackpieces/Bking.png"
+    turnDisplayerDiv.innerHTML = `<img src="${imgUrl}" alt="${winner}-icon" id="turn-displayer-icon"></img>`
 }

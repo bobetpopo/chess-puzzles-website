@@ -5,14 +5,18 @@ body {
     
 }
 
-p {
+#turn-displayer-text {
     text-align: center;
     font-size: 20px;
 
     margin-top: 20px;   
 }
 
-button {
+.btn {
+    display: inline;
+    margin: 10px auto;
+}
+/* .game-btn {
     display: inline;
     background-color: #129f4d;
     font-size: 18px;
@@ -30,7 +34,7 @@ button {
     outline-color: rgba(255, 255, 255, .5);
     transition: all 1250ms cubic-bezier(0.19, 1, 0.22, 1);
     transition: font-size 50ms linear;
-}
+} */
 
 /* #reset-btn:hover {
     border: 1px solid;
@@ -82,15 +86,54 @@ button {
     display: flex;
     height: 375px;
     width: 350px;
-    background-color: #505955e5;
+    background-color: #505955;
     padding: 5px 10px;
     margin: auto;
     white-space: pre-line;
+    overflow: auto;
+
+}
+
+::-webkit-scrollbar {
+    width: 19px;
+}
+
+::-webkit-scrollbar-track, ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb:hover {
+    border: solid 6px transparent;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 15px 15px #2a2f2d;
+}
+   
+::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 15px 15px rgb(180, 180, 180);  
+}
+  
+
+::-webkit-scrollbar-thumb:active {
+    box-shadow: inset 0 0 15px 15px gainsboro
 }
 
 #move-num-displayer {
     width: 2em;
     height: 100%;
+    margin-right: 0.5em;
+}
+
+.move-number, .move-text{
+    margin: 0;
+    padding: 0.1em 0.5em;
+    border-radius: 0.25em;
+}
+
+
+
+.highlighted-move {
+    color: #0d0b0c;
+    background: #afa6aa;
+    width: fit-content;
 }
 
 .move-textfield {
@@ -133,6 +176,14 @@ button {
 
 .dark {
     background-color: #b58863;
+}
+
+.just-moved.light {
+    background-color: #a4a4a4;
+}
+
+.just-moved.dark {
+    background-color: #6e6e6e;
 }
 
 .valid-target-square.light {
@@ -237,4 +288,6 @@ button {
     border: 3px solid green;
     box-sizing: border-box;
 }
+
+
 

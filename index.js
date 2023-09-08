@@ -18,7 +18,7 @@ app.listen(3000, () => {
 
 
 app.get("/random-puzzle", async (req, res) => {
-    const random = Math.floor(Math.random() * 10)
+    const random = Math.floor(Math.random() * 100000)
     try {
         const randomPuzzle = await Puzzle.findOne().skip(random)
         res.json(randomPuzzle)
