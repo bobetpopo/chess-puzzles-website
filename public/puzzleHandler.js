@@ -5,7 +5,6 @@ function randomPuzzle() {
                 const puzzle = res.data
 
                 const { FEN, Moves } = puzzle
-                console.log(FEN)
                 console.log(Moves)
 
                 clearBoard()
@@ -22,18 +21,18 @@ function randomPuzzle() {
     clearMoveLog()
 }
 
+const promotionLetterMap = new Map()
+promotionLetterMap.set("q", "queen")
+promotionLetterMap.set("b", "bishop")
+promotionLetterMap.set("r", "rook")
+promotionLetterMap.set("n", "knight")
+promotionLetterMap.set("", null)
 
 function puzzleAutoMove(move) {
     setTimeout(() => {
         const start = document.getElementById(getSquareID(move.slice(0, 2)))
-
         const end = document.getElementById(getSquareID(move.slice(2, 4)))
 
-        // if there is a promotion: select piece
-        const promotionPiece = move.charAt(4) ? string.charAt(4) : ""
-        console.log(promotionPiece)
-        
-        
         if (start.firstChild) {
             start.firstChild.click()
         }
@@ -41,6 +40,12 @@ function puzzleAutoMove(move) {
             end.firstChild.click()
         } else {
             end.click()
+        }
+        // if there is a promotion: select piece
+        const promotionPieceLetter = move.charAt(4) ? move.charAt(4) : ""
+        const promotionPiece = promotionLetterMap.get(promotionPieceLetter)
+        if (promotionPiece) {
+            document.querySelector(`.selector.piece.${promotionPiece}`).click()
         }
     }, 1000)
 }
@@ -54,4 +59,12 @@ function getSquareID(square) {
 function startPuzzle(FEN) {
     startGame(FEN)
     document.getElementById("reset-btn").disabled = true
+}
+
+function test() {
+    // const testFEN = "rn3rk1/pppP2p1/7p/2bnpp2/7q/2NP1BP1/PPP4P/R1B1K1NR/ w"
+    // const testMoves = "d7d8q f8f7"
+    // clearBoard()
+    // startPuzzle(testFEN)
+    // puzzleAutoMove(testMoves.split(" ")[0])
 }
