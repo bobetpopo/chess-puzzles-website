@@ -20,13 +20,35 @@ function clearBoard() {
     removeMoveIndicator()
 }
 
+function flipBoard() {
+    const board = document.getElementById("chessboard")
+    board.classList.toggle("flipped")
+    const pieces = document.querySelectorAll(".piece")
+    pieces.forEach(piece => {
+        piece.classList.toggle("flipped")
+    })
+}
+
+function flipBoardIfNeeded() {
+    const board = document.getElementById("chessboard")
+    if (board.classList.contains("flipped")) {
+        flipBoard()
+        return "flipped board"
+    } else {
+        return "no flip"
+    }
+}
+
 function resetGame() {
     clearBoard()
-    startGame(startPos)
     clearMoveLog()
+    startGame(startPos)
 }
 
 function render(fen) {
+    // flip board before render if is flipped
+    const flip = flipBoardIfNeeded()
+
     const params = fen.split(" ")
     const pieceDisposition = params[0]
     const activeColor = params[1]
@@ -92,6 +114,8 @@ function render(fen) {
     }
     // set turn
     currentPlayer = activeColor === "w" ? "white" : "black"
+    // flip board back if it was flipped for render
+    flip === "flipped board" ? flipBoard() : null
 }
 
 const squares = document.querySelectorAll(".square")

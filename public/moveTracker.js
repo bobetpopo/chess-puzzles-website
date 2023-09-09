@@ -118,17 +118,6 @@ function displayMoveLog() {
     moveText.classList.add("move-text")
     moveText.id = `move${moveNumber}`
 
-    // display moves OLD
-    // moveNumDisplayer.textContent += `${ displayNum }${ carriageReturn }`
-    // if (currentPlayer === "black") {
-    //     moveTextfieldWhite.textContent += moveText
-    // } else {
-    //     if (displayNum === "1.") {
-    //         moveTextfieldWhite.textContent += "...\r\n"
-    //         moveLog.unshift("...")
-    //     }
-    //     moveTextfieldBlack.textContent += moveText
-    // }
     if (displayNum) {
         moveNumDisplayer.appendChild(displayNum)
     }

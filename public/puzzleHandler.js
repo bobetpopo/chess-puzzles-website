@@ -29,6 +29,9 @@ promotionLetterMap.set("n", "knight")
 promotionLetterMap.set("", null)
 
 function puzzleAutoMove(move) {
+    // disable move nav buttons while puzzle loads
+    document.getElementById("rewind-move-btn").disabled = true
+    document.getElementById("next-move-btn").disabled = true
     setTimeout(() => {
         const start = document.getElementById(getSquareID(move.slice(0, 2)))
         const end = document.getElementById(getSquareID(move.slice(2, 4)))
@@ -47,6 +50,10 @@ function puzzleAutoMove(move) {
         if (promotionPiece) {
             document.querySelector(`.selector.piece.${promotionPiece}`).click()
         }
+
+        // enable move nav
+        document.getElementById("rewind-move-btn").disabled = false
+        document.getElementById("next-move-btn").disabled = false
     }, 1000)
 }
 
@@ -57,8 +64,13 @@ function getSquareID(square) {
 }
 
 function startPuzzle(FEN) {
+    flipBoardIfNeeded()
     startGame(FEN)
-    document.getElementById("reset-btn").disabled = true
+    // if current player is white, user plays black, so flip
+    if (currentPlayer === "white") {
+        flipBoard()
+    }
+    document.getElementById("reset-btn").disabled = true  
 }
 
 function test() {

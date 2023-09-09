@@ -108,6 +108,12 @@
                 <div id="81" class="square light"></div>
             </div>
         </div>
+        <div id="middle-display">
+            <button title="Flip Board" id="flip-btn" onclick="flipBoard()">
+                <i class="fa fa-refresh"></i>
+            </button>
+
+        </div>
         <div id="side-display">
             <div id="turn-displayer">
                 <div id="turn-displayer-div"></div>
@@ -119,27 +125,27 @@
                 <div id="move-textfield-black" class="move-textfield"></div>
             </div>
             <div id="game-btn-container">
-                <button class="btn btn-warning" id="reset-btn" onclick="resetGame()">
+                <button class="btn btn-warning" id="reset-btn" title="Reset Board" onclick="resetGame()">
                     &#10226;
                 </button>
-                <button class="btn btn-warning" id="rewind-move-btn" onclick="rewindMove()">
+                <button class="btn btn-warning" id="rewind-move-btn" title="Previous Move" onclick="rewindMove()">
                     &#8630;
                 </button>
-                <button class="btn btn-warning" id="next-move-btn" onclick="nextMove()">
+                <button class="btn btn-warning" id="next-move-btn" title="Next Move" onclick="nextMove()">
                     &#8631;
                 </button>
-                <button class="btn btn-warning" id="random-btn" onclick="randomPuzzle()">
-                    Get Puzzle
+                <button class="btn btn-warning" id="random-btn" title="Next Puzzle" onclick="randomPuzzle()">
+                    Next &#8680;
                 </button>
             </div>
-            
+
         </div>
     </div>
 
     <button id="test-btn" onclick="test()">TEST</button>
 
 
-
+    
     <script src="gameLogic.js"></script>
     <script src="moveTracker.js"></script>
     <script src="gameSetup.js"></script>
@@ -148,6 +154,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
         crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/39be4e9100.js" crossorigin="anonymous"></script>
 </body>
 
 </html>
