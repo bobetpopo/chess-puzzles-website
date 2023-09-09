@@ -1,5 +1,16 @@
 const startPos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"
+const modebtns = document.querySelectorAll(".mode-select")
+const [freePlay, playPuzzles] = modebtns
 
+function freePlayMode() {
+    playPuzzles.classList.remove("current-mode")
+    freePlay.classList.add("current-mode")
+}
+
+function puzzleMode() {
+    freePlay.classList.remove("current-mode")
+    playPuzzles.classList.add("current-mode")
+}
 
 // start game
 startGame(startPos)

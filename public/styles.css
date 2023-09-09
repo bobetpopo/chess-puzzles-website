@@ -1,57 +1,100 @@
 body {
     background-color: #373e38;
     color: #F2F4F3;
-    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+}
+
+#navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 3rem;
+
+    background-color: #373e38;
+    margin-top: 1rem;
+    padding: 0.6rem 2.5rem;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+.mode-select {
+    display: inline-block;
+    color: #999999;
+    background-color: transparent;
+    font-weight: bold;
+    font-size: 1.2rem;
+    position: relative;
+
+    margin: 0 1rem;
+
+    border: 0;
+    cursor: pointer;
+    transition: color 300ms linear, text-shadow 300ms ease-out;
+}
+
+.mode-select::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: block;
+    width: 100%;
+    height: 3px;
+    margin-top: 4px;
+    background-color: #F2F4F3;
+    transform: scale(0);
+    transition: transform 250ms ease-in;
+}
+
+.mode-select:hover::after {
+    transform: scale(1);
+}
+
+.current-mode {
+    color: #F2F4F3;
+    text-shadow: 0 0 0.4rem white;
+}
+
+#login-btn {
+    background-color: black;
+    color: #F2F4F3;
+    border: 0;
+    border-radius: 5px;
+    padding: 0.3rem 1rem;
+    box-shadow: inset 0 0 2px white;
+    transition: background-color 200ms ease-out, box-shadow 200ms ease-out;
+}
+
+#login-btn:hover {
+    background-color: #1c1b1b;
+    box-shadow: none;
 }
 
 #turn-displayer-text {
     text-align: center;
     font-size: 20px;
 
-    margin-top: 20px;   
+    margin-top: 20px;
 }
 
 .btn {
     width: 5.4em;
     margin: 0.5em auto;
-}
-/* .game-btn {
-    display: inline;
-    background-color: #129f4d;
-    font-size: 18px;
+    position: relative;
     font-weight: bold;
-    color: #F2F4F3;
-    text-shadow: 0 0 2px black;
-    
-
-    margin: 10px auto;
-    border: 0 solid;
-    border-radius: 10px;
-    padding: 10px 20px;
-    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0);
-    outline: 1px solid;
-    outline-color: rgba(255, 255, 255, .5);
-    transition: all 1250ms cubic-bezier(0.19, 1, 0.22, 1);
-    transition: font-size 50ms linear;
-} */
-
-/* #reset-btn:hover {
-    border: 1px solid;
-    box-shadow: inset 0 0 20px rgba(255, 255, 255, .4), 0 0 20px rgba(255, 255, 255, .2);
-    outline-color: rgba(255, 255, 255, 0);
-    text-shadow: 1px 1px 2px #427388;
-    font-size: 20px;
-} */
-
+    border: 0;
+    box-shadow: inset 0 0 3px black;
+}
 
 
 #game-window {
+    margin-top: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    margin-top: 50px;
 }
 
 #side-display {
@@ -62,6 +105,7 @@ body {
     background-color: #202320;
     width: 25rem;
     height: 35rem;
+    box-shadow: 2px 2px  5px black;
 }
 
 #turn-displayer {
@@ -96,7 +140,9 @@ body {
     width: 19px;
 }
 
-::-webkit-scrollbar-track, ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb:hover {
     border: solid 6px transparent;
     border-radius: 10px;
 }
@@ -104,11 +150,11 @@ body {
 ::-webkit-scrollbar-track {
     box-shadow: inset 0 0 15px 15px #2a2f2d;
 }
-   
+
 ::-webkit-scrollbar-thumb {
-    box-shadow: inset 0 0 15px 15px rgb(180, 180, 180);  
+    box-shadow: inset 0 0 15px 15px rgb(180, 180, 180);
 }
-  
+
 
 ::-webkit-scrollbar-thumb:active {
     box-shadow: inset 0 0 15px 15px gainsboro
@@ -120,7 +166,8 @@ body {
     margin-right: 0.5em;
 }
 
-.move-number, .move-text{
+.move-number,
+.move-text {
     margin: 0;
     padding: 0.1em 0.5em;
     border-radius: 0.25em;
@@ -140,14 +187,54 @@ body {
 #game-btn-container {
     display: flex;
     text-align: center;
-    border-top: 1px solid rgb(139, 139, 139);
+    /* border-top: 1px solid rgb(139, 139, 139); */
     box-sizing: border-box;
+}
+
+#game-btn-container>.btn::after {
+    content: attr(data-tool-tip);
+    display: none;
+    position: absolute;
+    background-color: rgb(118, 124, 93);
+    color: #F2F4F3;
+    margin-bottom: 0.1rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.4rem;
+    text-align: center;
+    font-size: 0.75em;
+    font-weight: bold;
+    bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    white-space: nowrap;
+
+    animation: scaleAnimation 200ms ease-out;
+}
+
+@keyframes scaleAnimation {
+    from {
+        transform: translateX(-50%) scale(0);
+        left: 50%;
+    }
+
+    to {
+        transform: translateX(-50%) scale(1);
+        left: 50%;
+    }
+}
+
+#game-btn-container>.btn:hover::after {
+    display: block;
+    bottom: 100%;
+    transform: translateX(-50%) scale(1);
+    left: 50%;
+
 }
 
 #middle-display {
     width: 2.5rem;
     height: 35rem;
-    margin: 0 0.3rem;
+    margin-right: 3rem;
 
     display: flex;
     justify-content: center;
@@ -158,7 +245,7 @@ body {
     background-color: transparent;
     border: 0;
     color: azure;
-    transition: transform 0.3s linear 
+    transition: transform 0.3s linear
 }
 
 #flip-btn:hover {
@@ -222,7 +309,7 @@ body {
     background-position: center;
     cursor: grab;
 
-    
+
 }
 
 .white.pawn {
@@ -309,6 +396,3 @@ body {
     border: 3px solid green;
     box-sizing: border-box;
 }
-
-
-

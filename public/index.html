@@ -12,6 +12,15 @@
 </head>
 
 <body>
+    <nav id="navbar">
+        <h1>Chess :Puzzles</h1>
+        <div id="nav-mid">
+            <button class="mode-select" onclick="freePlayMode()">Free Play</button>
+            <button class="mode-select" onclick="puzzleMode()">Solve Puzzles</button>
+        </div>
+        <button id="login-btn">Log In</button>
+    </nav>
+
     <div id="game-window">
         <div id="chessboard">
             <div id="box">
@@ -125,17 +134,18 @@
                 <div id="move-textfield-black" class="move-textfield"></div>
             </div>
             <div id="game-btn-container">
-                <button class="btn btn-warning" id="reset-btn" title="Reset Board" onclick="resetGame()">
+                <button class="btn btn-warning" id="reset-btn" data-tool-tip="Reset Board" onclick="resetGame()" >
                     &#10226;
                 </button>
-                <button class="btn btn-warning" id="rewind-move-btn" title="Previous Move" onclick="rewindMove()">
+                <button class="btn btn-warning" id="rewind-move-btn" data-tool-tip="Previous Move"
+                    onclick="rewindMove()">
                     &#8630;
                 </button>
-                <button class="btn btn-warning" id="next-move-btn" title="Next Move" onclick="nextMove()">
+                <button class="btn btn-warning" id="next-move-btn" data-tool-tip="Next Move" onclick="nextMove()">
                     &#8631;
                 </button>
-                <button class="btn btn-warning" id="random-btn" title="Next Puzzle" onclick="randomPuzzle()">
-                    Next &#8680;
+                <button class="btn btn-warning" id="random-btn" data-tool-tip="Next Puzzle" onclick="randomPuzzle()">
+                    &#8680;
                 </button>
             </div>
 
@@ -145,7 +155,7 @@
     <button id="test-btn" onclick="test()">TEST</button>
 
 
-    
+
     <script src="gameLogic.js"></script>
     <script src="moveTracker.js"></script>
     <script src="gameSetup.js"></script>

@@ -32,6 +32,7 @@ function puzzleAutoMove(move) {
     // disable move nav buttons while puzzle loads
     document.getElementById("rewind-move-btn").disabled = true
     document.getElementById("next-move-btn").disabled = true
+    document.getElementById("random-btn").disabled = true
     setTimeout(() => {
         const start = document.getElementById(getSquareID(move.slice(0, 2)))
         const end = document.getElementById(getSquareID(move.slice(2, 4)))
@@ -54,6 +55,7 @@ function puzzleAutoMove(move) {
         // enable move nav
         document.getElementById("rewind-move-btn").disabled = false
         document.getElementById("next-move-btn").disabled = false
+        document.getElementById("random-btn").disabled = false
     }, 1000)
 }
 
