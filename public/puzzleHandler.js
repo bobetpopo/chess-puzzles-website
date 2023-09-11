@@ -30,9 +30,7 @@ promotionLetterMap.set("", null)
 
 function puzzleAutoMove(move) {
     // disable move nav buttons while puzzle loads
-    document.getElementById("rewind-move-btn").disabled = true
-    document.getElementById("next-move-btn").disabled = true
-    document.getElementById("random-btn").disabled = true
+    disableGameButtons()
     setTimeout(() => {
         const start = document.getElementById(getSquareID(move.slice(0, 2)))
         const end = document.getElementById(getSquareID(move.slice(2, 4)))
@@ -52,10 +50,8 @@ function puzzleAutoMove(move) {
             document.querySelector(`.selector.piece.${promotionPiece}`).click()
         }
 
-        // enable move nav
-        document.getElementById("rewind-move-btn").disabled = false
-        document.getElementById("next-move-btn").disabled = false
-        document.getElementById("random-btn").disabled = false
+        enableGameButtons()
+        document.getElementById("reset-btn").disabled = true
     }, 1000)
 }
 
@@ -76,9 +72,8 @@ function startPuzzle(FEN) {
 }
 
 function test() {
-    // const testFEN = "rn3rk1/pppP2p1/7p/2bnpp2/7q/2NP1BP1/PPP4P/R1B1K1NR/ w"
-    // const testMoves = "d7d8q f8f7"
-    // clearBoard()
-    // startPuzzle(testFEN)
-    // puzzleAutoMove(testMoves.split(" ")[0])
+    const testFEN = "r1bq1rk1/1pp2pp1/p1np1n1p/4p3/2B1P3/2NPPN2/PPP1Q1PP/R4RK1/ w"
+    clearBoard()
+    clearMoveLog()
+    startGame(testFEN)
 }

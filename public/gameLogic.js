@@ -353,24 +353,36 @@ function removeWrongSquares(allValidSquares) {
 }
 
 // pawn promotion
+function isPromotionSquare(endSquare) {
+    const promotionRow = currentPlayer === "white" ? "8" : "1"
+    const targetRow = endSquare.id.charAt(1)
+
+    return promotionRow === targetRow
+}
+
 function promotePawn(pawnSquare, promotionSquare) {
-    document.getElementById("box").style.display = "flex"
+    disableGameButtons()
     removePieceEventListener()
+    document.getElementById("box").style.display = "flex"
 
     const selectorPieces = document.querySelectorAll(".selector")
     selectorPieces.forEach(piece => {
-        piece.classList.remove("white", "black")
+        // add piece color to display
         currentPlayer === "white" ? piece.classList.add("white") : piece.classList.add("black")
 
+        // store piece info for later
+        const pieceType = piece.classList[2]
+        const pieceColor = currentPlayer
+
         piece.addEventListener("click", function () {
-            let newPiece = document.createElement("div")
-            newPiece.className = piece.className
-            newPiece.classList.remove("selector")
+            const newPiece = document.createElement("div")
+            newPiece.className = `piece ${pieceColor} ${pieceType}`
 
             document.getElementById("box").style.display = "none"
             if (newPiece) {
                 promotionSquare.appendChild(newPiece)
             }
+            enableGameButtons()
             addPieceEventListener()
             handleCheck(currentPlayer)
             promotionSquare = null

@@ -43,8 +43,10 @@ h1 {
     display: block;
     width: 100%;
     height: 3px;
-    margin-top: 4px;
-    background-color: #F2F4F3;
+    margin-top: 2px;
+    background-color: #e0e0e0;
+    border-radius: 2px;
+    box-shadow: 0 0 2px rgb(178, 178, 178);
     transform: scale(0);
     transition: transform 250ms ease-in;
 }
@@ -65,12 +67,14 @@ h1 {
     border-radius: 5px;
     padding: 0.3rem 1rem;
     box-shadow: inset 0 0 2px white;
-    transition: background-color 200ms ease-out, box-shadow 200ms ease-out;
+    transition: all 200ms ease-out, box-shadow 200ms ease-out;
 }
 
 #login-btn:hover {
-    background-color: #1c1b1b;
-    box-shadow: none;
+    background-color: gold;
+    color: black;
+    box-shadow: inset 0 0 2px black;
+    outline: 1px solid black;
 }
 
 #turn-displayer-text {
@@ -80,14 +84,6 @@ h1 {
     margin-top: 20px;
 }
 
-.btn {
-    width: 5.4em;
-    margin: 0.5em auto;
-    position: relative;
-    font-weight: bold;
-    border: 0;
-    box-shadow: inset 0 0 3px black;
-}
 
 
 #game-window {
@@ -191,6 +187,16 @@ h1 {
     box-sizing: border-box;
 }
 
+.game-btn {
+    width: 5.6rem;
+    margin: 0.5rem auto;
+    position: relative;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border: 0;
+    box-shadow: inset 0 0 3px black;
+}
+
 #game-btn-container>.btn::after {
     content: attr(data-tool-tip);
     display: none;
@@ -242,6 +248,7 @@ h1 {
 }
 
 #flip-btn {
+    font-size: 1.2rem;
     background-color: transparent;
     border: 0;
     color: azure;

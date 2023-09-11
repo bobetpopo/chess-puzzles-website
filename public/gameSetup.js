@@ -131,5 +131,16 @@ function render(fen) {
 
 const squares = document.querySelectorAll(".square")
 
+function disableGameButtons() {
+    const gameButtons = document.querySelectorAll(".game-btn") 
+    gameButtons.forEach(button => {
+        button.disabled = true
+    })
+}
 
-
+function enableGameButtons() {
+    const gameButtons = document.querySelectorAll(".game-btn") 
+    gameButtons.forEach(button => {
+        button.disabled = false
+    })
+}

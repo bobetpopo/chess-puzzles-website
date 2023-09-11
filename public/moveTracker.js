@@ -1,9 +1,10 @@
+// tracks move information: start square, end square, piece, etc.
 let moveLog = []
+// tracks positions of the board for navigation between moves
 let FENLog = []
 let moveNumber = -1
 
 function logFEN() {
-
     const pieceDisposition = getPieceDisposition()
     const activeColor = currentPlayer === "white" ? "w" : "b"
 
@@ -90,22 +91,23 @@ function logMove(piece, startSquare, endSquare, isCapture) {
 }
 
 function displayMoveLog() {
-    const displayNum = getDisplayNum()
-    // const carriageReturn = displayNum === "" ? "" : "\r\n"
-
     const moveNumDisplayer = document.getElementById("move-num-displayer")
     const moveTextfieldWhite = document.getElementById("move-textfield-white")
     const moveTextfieldBlack = document.getElementById("move-textfield-black")
 
+    const displayNum = getDisplayNum()
     const lastMove = moveLog[moveLog.length - 1]
+
+    // Parameters for Standard Algebraic Notation of moves
     const pieceLetter = getPieceLetter(lastMove.piece, lastMove.isCapture, lastMove.start)
+    const pieceExtraInfo = getPieceExtraInfo(lastMove.piece, lastMove.end, lastMove.start)
     const endSquare = getEndSquare(lastMove.end.id)
     const captureSign = lastMove.isCapture ? "x" : ""
     const mateSign = lastMove.isMate ? "#" : ""
     const checkSign = !mateSign && lastMove.isCheck ? "+" : ""
 
 
-    let moveInnerText = `${ pieceLetter }${ captureSign }${ endSquare }${ checkSign }${ mateSign }`
+    let moveInnerText = pieceLetter + pieceExtraInfo + captureSign + endSquare + checkSign + mateSign
 
     // castle moves, logic flipped
     if (handleCastleMove(lastMove.piece, lastMove.start) === "kingside") {
@@ -168,6 +170,45 @@ function getPieceLetter(piece, isCapture, startSquare) {
     }
 }
 
+function getPieceExtraInfo(piece, endSquare, startSquare) {
+    // if pawn move, no need to bother
+    if (piece.classList.contains("pawn")) {
+        return ""
+    }
+    let extraInfo = ""
+
+    // remove piece to liberate square
+    piece.remove()
+    // select all other same pieces that are not the one that moved
+    const samePieces = document.querySelectorAll(`.${piece.classList[1]}.${piece.classList[2]}`)
+
+    // for each same piece:
+    // if the piece can move to same square and is on the same row, add the column letter to extra info
+    // if the piece can move to same square and is on the same column, add the row number to extra info
+    const pieceCol = String.fromCharCode(96 + parseInt(startSquare.id[0]))
+    const pieceRow = startSquare.id[1]
+    samePieces.forEach(p => {
+        const pCol = String.fromCharCode(96 + parseInt(p.parentElement.id[0]))
+        const pRow = p.parentElement.id[1]
+
+        const validMoves = getValidPieceMoves(p)
+        if (validMoves.includes(endSquare.id)) {
+            console.log("two pieces can reach the same square!")
+            if (pieceRow === pRow) {
+                extraInfo += pieceCol
+            } else if (pieceCol === pCol) {
+                extraInfo += pieceRow
+            } else if (pieceRow !== pRow && pieceCol !== pCol) {
+                extraInfo += pieceCol
+            }
+        }
+    })
+    // add piece back, unless promotion
+    endSquare.appendChild(piece)
+
+    return extraInfo
+}
+
 function getEndSquare(square) {
     const [column, row] = square.split("")
     const columnChar = String.fromCharCode(96 + parseInt(column))
@@ -176,12 +217,6 @@ function getEndSquare(square) {
 }
 
 function getDisplayNum() {
-    // OLD
-    // if (moveLog.length % 2 === 0) {
-    //     return ""
-    // } else {
-    //     return Math.floor((moveLog.length + 1) / 2) + "."
-    // }
     if (moveLog.length % 2 === 0) {
         return ""
     } else {
