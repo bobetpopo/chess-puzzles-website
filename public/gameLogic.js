@@ -85,7 +85,7 @@ function movePiece(event) {
                 // captureSound.play()
                 isCapture = true
             }
-            // remove en passant targets
+            // remove en passant target class if any pawn had the class
             clearEnPassantTargets()
             //check for pawn promotion & en passant
             let addPieceToSquare = true
@@ -122,9 +122,12 @@ function movePiece(event) {
             clearValidMoves()
             changeTurn()
             handleCheck(currentPlayer)
-
             logMove(currentPiece, currentSquare, targetSquare, isCapture)
             addMoveIndicator(currentSquare, targetSquare)
+            // in puzzle mode, every even move is the user's move, validate them
+            if (gamemode === "puzzle" && moveNumber % 2 === 0) {
+                handlePuzzleMove(currentSquare, targetSquare)
+            }
         }
     }
 }
@@ -141,7 +144,7 @@ function displayTurn() {
 
     turnDisplayerDiv = document.getElementById("turn-displayer-div")
     const imgUrl = currentPlayer === "white" ? "whitepieces/Wpawn.png" : "blackpieces/Bpawn.png"
-    turnDisplayerDiv.innerHTML = `<img src="${imgUrl}" alt="${currentPlayer}-icon" id="turn-displayer-icon"></img>`
+    turnDisplayerDiv.innerHTML = `<img src="${ imgUrl }" alt="${ currentPlayer }-icon" id="turn-displayer-icon"></img>`
 }
 
 // show trail for piece that just moved
@@ -361,10 +364,11 @@ function isPromotionSquare(endSquare) {
 }
 
 function promotePawn(pawnSquare, promotionSquare) {
+    // disable move nav buttons and piece buttons
     disableGameButtons()
     removePieceEventListener()
-    document.getElementById("box").style.display = "flex"
 
+    document.getElementById("box").style.display = "flex"
     const selectorPieces = document.querySelectorAll(".selector")
     selectorPieces.forEach(piece => {
         // add piece color to display
@@ -376,7 +380,7 @@ function promotePawn(pawnSquare, promotionSquare) {
 
         piece.addEventListener("click", function () {
             const newPiece = document.createElement("div")
-            newPiece.className = `piece ${pieceColor} ${pieceType}`
+            newPiece.className = `piece ${ pieceColor } ${ pieceType }`
 
             document.getElementById("box").style.display = "none"
             if (newPiece) {
@@ -387,6 +391,11 @@ function promotePawn(pawnSquare, promotionSquare) {
             handleCheck(currentPlayer)
             promotionSquare = null
             pawnSquare.innerHTML = ""
+
+            // redo the fen update that happened before a piece was picked by user
+            FENLog.pop()
+            moveNumber--
+            logFEN()
         })
     })
 
@@ -659,5 +668,5 @@ function endGame() {
     document.getElementById("turn-displayer-text").textContent = `${ winner } wins!`
     turnDisplayerDiv = document.getElementById("turn-displayer-div")
     const imgUrl = winner === "White" ? "whitepieces/Wking.png" : "blackpieces/Bking.png"
-    turnDisplayerDiv.innerHTML = `<img src="${imgUrl}" alt="${winner}-icon" id="turn-displayer-icon"></img>`
+    turnDisplayerDiv.innerHTML = `<img src="${ imgUrl }" alt="${ winner }-icon" id="turn-displayer-icon"></img>`
 }

@@ -1,19 +1,33 @@
 const startPos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"
+const squares = document.querySelectorAll(".square")
 const modebtns = document.querySelectorAll(".mode-select")
 const [freePlay, playPuzzles] = modebtns
+let gamemode
 
 function freePlayMode() {
     playPuzzles.classList.remove("current-mode")
     freePlay.classList.add("current-mode")
+    gamemode = "freeplay"
+    clearBoard()
+    clearMoveLog()
+    startGame(startPos)
+
+    // disable next puzzle button
+    document.getElementById("random-btn").disabled = true
+    document.getElementById("reset-btn").disabled = false
 }
 
 function puzzleMode() {
     freePlay.classList.remove("current-mode")
     playPuzzles.classList.add("current-mode")
+    gamemode = "puzzle"
+
+    randomPuzzle()
 }
 
-// start game
-startGame(startPos)
+// start game, in freeplay by default
+freePlayMode()
+
 function startGame(fen) {
     render(fen)
     addPieceEventListener()
@@ -129,13 +143,16 @@ function render(fen) {
     flip === "flipped board" ? flipBoard() : null
 }
 
-const squares = document.querySelectorAll(".square")
-
 function disableGameButtons() {
     const gameButtons = document.querySelectorAll(".game-btn") 
     gameButtons.forEach(button => {
         button.disabled = true
     })
+    const modeSelectButtons = document.querySelectorAll(".mode-select")
+    modeSelectButtons.forEach(button => {
+        button.disabled = true
+    })
+    document.onkeydown = null
 }
 
 function enableGameButtons() {
@@ -143,4 +160,9 @@ function enableGameButtons() {
     gameButtons.forEach(button => {
         button.disabled = false
     })
+    const modeSelectButtons = document.querySelectorAll(".mode-select")
+    modeSelectButtons.forEach(button => {
+        button.disabled = false
+    })
+    enableArrowMoving()
 }

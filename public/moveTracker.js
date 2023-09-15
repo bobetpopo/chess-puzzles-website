@@ -127,6 +127,7 @@ function displayMoveLog() {
     if (currentPlayer === "black") {
         moveTextfieldWhite.appendChild(moveText)
     } else {
+        // if black has moved first, display ... in white textfield
         if (displayNum.textContent === "1.") {
             moveTextfieldWhite.innerHTML = "<p class='move-text'>...</p>"
             moveLog.unshift("...")
@@ -236,12 +237,25 @@ function handleCastleMove(piece, endSquare) {
     }
 }
 
+// move navigation
+function enableArrowMoving() {
+    document.onkeydown = (event) => {
+        const { key } = event
+        if (key === "ArrowLeft") {
+            rewindMove()
+        } else if (key === "ArrowRight") {
+            nextMove()
+        }
+    }
+}
+
 function rewindMove() {
     if (moveNumber > 0) {
         moveNumber--
         clearBoard()
         render(FENLog[moveNumber])
         highlightMove()
+        handleCheck(currentPlayer)
     }
 }
 
@@ -255,6 +269,7 @@ function nextMove() {
             addPieceEventListener()
         }
         highlightMove()
+        handleCheck(currentPlayer)
     }
 }
 

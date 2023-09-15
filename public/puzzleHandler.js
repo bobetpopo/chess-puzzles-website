@@ -1,3 +1,5 @@
+let puzzleMoves = null
+
 function randomPuzzle() {
     try {
         axios.get("http://localhost:3000/random-puzzle")
@@ -5,6 +7,7 @@ function randomPuzzle() {
                 const puzzle = res.data
 
                 const { FEN, Moves } = puzzle
+                puzzleMoves = Moves.split(" ")
                 console.log(Moves)
 
                 clearBoard()
@@ -21,6 +24,16 @@ function randomPuzzle() {
     clearMoveLog()
 }
 
+function startPuzzle(FEN) {
+    flipBoardIfNeeded()
+    startGame(FEN)
+    // if current player is white, user plays black, so flip
+    if (currentPlayer === "white") {
+        flipBoard()
+    }
+    document.getElementById("reset-btn").disabled = true  
+}
+
 const promotionLetterMap = new Map()
 promotionLetterMap.set("q", "queen")
 promotionLetterMap.set("b", "bishop")
@@ -31,6 +44,7 @@ promotionLetterMap.set("", null)
 function puzzleAutoMove(move) {
     // disable move nav buttons while puzzle loads
     disableGameButtons()
+    
     setTimeout(() => {
         const start = document.getElementById(getSquareID(move.slice(0, 2)))
         const end = document.getElementById(getSquareID(move.slice(2, 4)))
@@ -61,14 +75,36 @@ function getSquareID(square) {
     return columnNumber + row
 }
 
-function startPuzzle(FEN) {
-    flipBoardIfNeeded()
-    startGame(FEN)
-    // if current player is white, user plays black, so flip
-    if (currentPlayer === "white") {
-        flipBoard()
+
+
+function handlePuzzleMove(startSquare, endSquare) {
+    const startCol = String.fromCharCode(96 + parseInt(startSquare.id[0]))
+    const startRow = startSquare.id[1]
+    const endCol = String.fromCharCode(96 + parseInt(endSquare.id[0]))
+    const endRow = endSquare.id[1]
+
+    const move = startCol + startRow + endCol + endRow
+    const answer = puzzleMoves[moveNumber - 1]
+
+    if (move === answer) {
+        console.log("correct move!")
+        if (moveNumber < puzzleMoves.length) {
+            puzzleAutoMove(puzzleMoves[moveNumber])
+        } else {
+            // no more moves to the puzzle, puzzle completed
+            puzzleCompleted()
+        }
+    } else {
+        puzzleFailed()
     }
-    document.getElementById("reset-btn").disabled = true  
+}
+
+function puzzleCompleted() {
+    alert("Congrats. You got the right answer!")
+}
+
+function puzzleFailed() {
+    alert("You did not get the right answer.")
 }
 
 function test() {
