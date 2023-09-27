@@ -101,7 +101,8 @@ h1 {
     background-color: #202320;
     width: 25rem;
     height: 35rem;
-    box-shadow: 2px 2px  5px black;
+    box-shadow: 2px 2px 5px black;
+    border-radius: 0.5rem;
 }
 
 #turn-displayer {
@@ -112,6 +113,8 @@ h1 {
 
     border-bottom: 1px solid rgb(139, 139, 139);
     box-sizing: border-box;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
 }
 
 #turn-displayer-icon {
@@ -120,17 +123,114 @@ h1 {
     margin-right: 1px;
 }
 
-#move-displayer {
+#move-display-container {
     display: flex;
+    flex-direction: column;
     height: 375px;
     width: 350px;
-    background-color: #505955;
-    padding: 5px 10px;
     margin: auto;
+    position: relative;
+}
+
+#move-display {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    background-color: #505955;
+    padding: 8px 10px;
     white-space: pre-line;
     overflow: auto;
-
+    border-radius: 5px;
+    position: relative;
 }
+
+#puzzle-end-screen {
+    width: 100%;
+    height: 50%;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    display: none;
+}
+
+#move-display-container.half-container #move-display {
+    border-radius: 0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    animation: halfAnimation 300ms ease-out;
+    height: 50%;
+}
+
+@keyframes halfAnimation {
+    from {
+        height: 100%
+    }
+
+    to {
+        height: 50%
+    }
+}
+
+#move-display-container.half-container #puzzle-end-screen {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 0;
+    transform-origin: bottom;
+    animation: popupAnimation 300ms ease-out;
+    background-color: #383e3b;
+}
+
+@keyframes popupAnimation {
+    from {
+        transform: scaleY(0)
+    }
+    
+    to {
+        transform: scaleY(1)
+    }
+}
+
+
+#puzzle-end-screen.puzzle-correct #puzzle-status{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 3rem;
+    box-shadow: inset 0 0 0.5rem black;
+    font-size: 1.4rem;
+
+
+    background-color: green;
+}
+
+#puzzle-end-screen.puzzle-incorrect #puzzle-status{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 3rem;
+    box-shadow: inset 0 0 0.5rem black;
+    font-size: 1.4rem;
+
+
+    background-color: red;
+}
+
+#puzzle-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 1.3rem;
+    
+    color: #ddd;
+    line-height: 0.6rem;
+    font-size: 1.3rem;
+}
+
+
+
 
 ::-webkit-scrollbar {
     width: 19px;
@@ -262,8 +362,6 @@ h1 {
 .flipped {
     transform: rotate(180deg);
 }
-
-
 
 #chessboard {
     display: flex;

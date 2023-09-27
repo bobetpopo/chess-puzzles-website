@@ -8,9 +8,9 @@ function logFEN() {
     const pieceDisposition = getPieceDisposition()
     const activeColor = currentPlayer === "white" ? "w" : "b"
 
-    FENLog.push(`${pieceDisposition} ${activeColor}`)
+    FENLog.push(`${ pieceDisposition } ${ activeColor }`)
     moveNumber++
-    highlightMove()
+    highlightMoveInDisplay()
 }
 
 
@@ -39,7 +39,7 @@ function getPieceDisposition() {
     let emptyStreak = 0
     for (let i = 0; i < 64; i++) {
         currentSquare = document.querySelector(`#row${ currentRow } div:nth-child(${ currentCol })`)
-  
+
         // if square has a piece
         if (currentSquare.firstChild) {
             // add number if applicable
@@ -63,7 +63,7 @@ function getPieceDisposition() {
             }
             currentCol = 1
             currentRow--
-            pieceDisposition += "/"   
+            pieceDisposition += "/"
         } else {
             currentCol++
         }
@@ -118,12 +118,12 @@ function displayMoveLog() {
     const moveText = document.createElement("p")
     moveText.textContent = moveInnerText
     moveText.classList.add("move-text")
-    moveText.id = `move${moveNumber}`
+    moveText.id = `move${ moveNumber }`
 
     if (displayNum) {
         moveNumDisplayer.appendChild(displayNum)
     }
-    
+
     if (currentPlayer === "black") {
         moveTextfieldWhite.appendChild(moveText)
     } else {
@@ -134,6 +134,11 @@ function displayMoveLog() {
         }
         moveTextfieldBlack.appendChild(moveText)
     }
+    scrollToBottom()
+}
+
+function scrollToBottom() {
+    document.getElementById("move-display").scrollTop = document.getElementById("move-num-displayer").scrollHeight
 }
 
 function clearMoveLog() {
@@ -181,7 +186,7 @@ function getPieceExtraInfo(piece, endSquare, startSquare) {
     // remove piece to liberate square
     piece.remove()
     // select all other same pieces that are not the one that moved
-    const samePieces = document.querySelectorAll(`.${piece.classList[1]}.${piece.classList[2]}`)
+    const samePieces = document.querySelectorAll(`.${ piece.classList[1] }.${ piece.classList[2] }`)
 
     // for each same piece:
     // if the piece can move to same square and is on the same row, add the column letter to extra info
@@ -194,7 +199,6 @@ function getPieceExtraInfo(piece, endSquare, startSquare) {
 
         const validMoves = getValidPieceMoves(p)
         if (validMoves.includes(endSquare.id)) {
-            console.log("two pieces can reach the same square!")
             if (pieceRow === pRow) {
                 extraInfo += pieceCol
             } else if (pieceCol === pCol) {
@@ -223,9 +227,9 @@ function getDisplayNum() {
     } else {
         const displayNum = Math.floor((moveLog.length + 1) / 2)
         const moveNum = document.createElement("p")
-        moveNum.textContent = `${displayNum}.`
+        moveNum.textContent = `${ displayNum }.`
         moveNum.classList.add("move-number")
-        moveNum.id = `num${displayNum}`
+        moveNum.id = `num${ displayNum }`
 
         return moveNum
     }
@@ -238,6 +242,7 @@ function handleCastleMove(piece, endSquare) {
 }
 
 // move navigation
+enableArrowMoving()
 function enableArrowMoving() {
     document.onkeydown = (event) => {
         const { key } = event
@@ -250,31 +255,47 @@ function enableArrowMoving() {
 }
 
 function rewindMove() {
+    // works only if there are moves to rewing
     if (moveNumber > 0) {
         moveNumber--
-        clearBoard()
-        render(FENLog[moveNumber])
-        highlightMove()
-        handleCheck(currentPlayer)
+        moveNavOperations(FENLog[moveNumber])
+
+        if (moveNumber > 0) {
+            const move = moveLog[moveNumber - 1]
+            const {start, end} = move
+            addMoveIndicator(start, end)
+        }
+        
     }
 }
 
 function nextMove() {
+    // works only if there are next moves to show
     if (moveNumber < FENLog.length - 1) {
         moveNumber++
-        clearBoard()
-        render(FENLog[moveNumber])
+        moveNavOperations(FENLog[moveNumber])
 
+        // enables piece moving when back to current move
         if (moveNumber === FENLog.length - 1) {
             addPieceEventListener()
         }
-        highlightMove()
-        handleCheck(currentPlayer)
-    }
+
+        // place move indicator back
+        const move = moveLog[moveNumber - 1]
+        const {start, end} = move
+        addMoveIndicator(start, end)
+    } 
 }
 
-function highlightMove() {
-    const highlightedMove = document.getElementById(`move${moveNumber - 1}`)
+function moveNavOperations(FEN) {
+    clearBoard()
+    render(FEN)
+    highlightMoveInDisplay()
+    handleCheck(currentPlayer)
+}
+
+function highlightMoveInDisplay() {
+    const highlightedMove = document.getElementById(`move${ moveNumber - 1 }`)
     if (highlightedMove) {
         removehighlights()
         highlightedMove.classList.add("highlighted-move")

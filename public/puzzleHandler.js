@@ -1,18 +1,21 @@
-let puzzleMoves = null
+let puzzle = {}
+let userRating = 1200
 
 function randomPuzzle() {
     try {
         axios.get("http://localhost:3000/random-puzzle")
             .then((res) => {
-                const puzzle = res.data
+                const puzzleData = res.data
 
-                const { FEN, Moves } = puzzle
-                puzzleMoves = Moves.split(" ")
-                console.log(Moves)
+                // const { FEN, Moves, Rating} = puzzleData
+                // puzzleMoves = Moves.split(" ")
+                // puzzleRating = Rating
+                puzzle = {...puzzleData}
+                console.log(puzzle)
 
                 clearBoard()
-                startPuzzle(FEN)
-                puzzleAutoMove(Moves.split(" ")[0])
+                startPuzzle(puzzle.FEN)
+                puzzleAutoMove(puzzle.Moves.split(" ")[0])
             })
             .catch(err => {
                 console.log("ERROR!")
@@ -31,6 +34,7 @@ function startPuzzle(FEN) {
     if (currentPlayer === "white") {
         flipBoard()
     }
+    clearPuzzleScreen()
     document.getElementById("reset-btn").disabled = true  
 }
 
@@ -66,7 +70,7 @@ function puzzleAutoMove(move) {
 
         enableGameButtons()
         document.getElementById("reset-btn").disabled = true
-    }, 1000)
+    }, 750)
 }
 
 function getSquareID(square) {
@@ -84,32 +88,81 @@ function handlePuzzleMove(startSquare, endSquare) {
     const endRow = endSquare.id[1]
 
     const move = startCol + startRow + endCol + endRow
-    const answer = puzzleMoves[moveNumber - 1]
+    const answerMoves = puzzle.Moves.split(" ")
+    const answer = answerMoves[moveNumber - 1]
 
+    let puzzleEnd = false
+    let puzzleCorrect
     if (move === answer) {
-        console.log("correct move!")
-        if (moveNumber < puzzleMoves.length) {
-            puzzleAutoMove(puzzleMoves[moveNumber])
+        if (moveNumber < answerMoves.length) {
+            puzzleAutoMove(answerMoves[moveNumber])
         } else {
             // no more moves to the puzzle, puzzle completed
-            puzzleCompleted()
+            puzzleCorrect = true
+            puzzleEnd = true
         }
     } else {
-        puzzleFailed()
+        puzzleCorrect = false
+        puzzleEnd = true
+    }
+
+    if (puzzleEnd) {
+        handlePuzzleEnd(puzzleCorrect)
     }
 }
 
-function puzzleCompleted() {
-    alert("Congrats. You got the right answer!")
+function handlePuzzleEnd(puzzleCorrect) {
+    const puzzleStatusClass = puzzleCorrect ? "puzzle-correct" : "puzzle-incorrect"
+    const puzzleStatusText = puzzleCorrect ? "Puzzle Correct!" : "Puzzle Incorrect!"
+    document.getElementById("move-display-container").classList.add("half-container")
+    document.getElementById("puzzle-end-screen").classList.add(puzzleStatusClass)
+    document.getElementById("puzzle-status").textContent = puzzleStatusText
+    document.getElementById("puzzle-rating").textContent = `Puzzle Rating: ${puzzle.Rating}`
+
+    // display rating change
+    const ratingChange = getRatingChange(puzzleCorrect)
+    userRating += ratingChange
+    const displayRatingChange = ratingChange < 0 ? `${userRating} (${ratingChange})` : `${userRating} (+${ratingChange})`
+    document.getElementById("user-rating").textContent = `Your Rating: ${displayRatingChange}`
+
+    // update html rating display
+    document.getElementById("rating-display").textContent = `Your Rating: ${userRating}`
 }
 
-function puzzleFailed() {
-    alert("You did not get the right answer.")
+// win or lose 5 to 15 points of rating, average of 10
+function getRatingChange(puzzleCorrect) {
+    const adjustment = (parseInt(puzzle.Rating) - userRating) / 20
+
+    let ratingChange
+    if (puzzleCorrect) {
+        ratingChange = Math.floor(10 + adjustment)
+    } else {
+        ratingChange = Math.floor(10 - adjustment)
+    }
+    
+    // impose min of 5 and max of 15
+    ratingChange = ratingChange < 5 ? 5 : ratingChange
+    ratingChange = ratingChange > 15 ? 15 : ratingChange 
+    // turn rating change negative if puzzle incorrect
+    ratingChange = puzzleCorrect ? ratingChange : ratingChange * -1
+
+
+    
+    return ratingChange
 }
 
+function clearPuzzleScreen() {
+    document.getElementById("move-display-container").classList.remove("half-container")
+    document.getElementById("puzzle-end-screen").classList.remove("puzzle-correct")
+    document.getElementById("puzzle-end-screen").classList.remove("puzzle-incorrect")
+}
+
+
+
+// show puzzle status before doing the half container
 function test() {
-    const testFEN = "r1bq1rk1/1pp2pp1/p1np1n1p/4p3/2B1P3/2NPPN2/PPP1Q1PP/R4RK1/ w"
-    clearBoard()
-    clearMoveLog()
-    startGame(testFEN)
+    // document.getElementById("move-display-container").classList.add("half-container")
+    // document.getElementById("puzzle-end-screen").classList.toggle("puzzle-correct")
+    // document.getElementById("puzzle-status").textContent = "Puzzle Correct!"
+
 }

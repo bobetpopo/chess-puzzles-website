@@ -128,10 +128,19 @@
                 <div id="turn-displayer-div"></div>
                 <p id="turn-displayer-text"></p>
             </div>
-            <div id="move-displayer">
-                <div id="move-num-displayer"></div>
-                <div id="move-textfield-white" class="move-textfield"></div>
-                <div id="move-textfield-black" class="move-textfield"></div>
+            <div id="move-display-container">
+                <div id="move-display">
+                    <div id="move-num-displayer"></div>
+                    <div id="move-textfield-white" class="move-textfield"></div>
+                    <div id="move-textfield-black" class="move-textfield"></div>
+                </div>
+                <div id="puzzle-end-screen">
+                    <div id="puzzle-status"></div>
+                    <div id="puzzle-info">
+                        <p id="user-rating">Your rating: </p>
+                        <p id="puzzle-rating">Puzzle rating: </p>
+                    </div>
+                </div>
             </div>
             <div id="game-btn-container">
                 <button class="btn btn-warning game-btn" id="reset-btn" data-tool-tip="Reset Board"
@@ -155,8 +164,8 @@
         </div>
     </div>
 
-    <button id="test-btn" onclick="test()">TEST</button>
-
+    <button id="test-btn" onclick="clearPuzzleScreen()">test</button>
+    <h2 id="rating-display">Your Rating: 1200</h2>
 
 
     <script src="gameLogic.js"></script>

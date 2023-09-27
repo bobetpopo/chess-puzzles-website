@@ -5,9 +5,15 @@ const [freePlay, playPuzzles] = modebtns
 let gamemode
 
 function freePlayMode() {
+    // update mode highlighting
     playPuzzles.classList.remove("current-mode")
     freePlay.classList.add("current-mode")
     gamemode = "freeplay"
+
+    // if puzzle end screen is up, take it down
+    if (document.getElementById("move-display-container").classList.contains("half-container")) {
+        clearPuzzleScreen()
+    }
     clearBoard()
     clearMoveLog()
     startGame(startPos)
