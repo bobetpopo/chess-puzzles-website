@@ -1,8 +1,14 @@
 const express = require("express")
 const app = express()
 const mongoose = require("mongoose")
-
 const Puzzle = require("./models/puzzle")
+const User = require("./models/user")
+
+const userRoutes = require("./routes/users")
+
+app.listen(3000, () => {
+    console.log("listening on port 3000")
+})
 
 main().catch(err => console.log(err))
 async function main() {
@@ -10,11 +16,8 @@ async function main() {
     console.log("Mongo connection open")
 }
 
-app.use(express.static('public'))
-
-app.listen(3000, () => {
-    console.log("listening on port 3000")
-})
+app.use(express.static('public/game'))
+app.use("/", userRoutes)
 
 
 app.get("/random-puzzle", async (req, res) => {
