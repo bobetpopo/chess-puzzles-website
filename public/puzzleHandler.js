@@ -70,7 +70,7 @@ function puzzleAutoMove(move) {
 
         enableGameButtons()
         document.getElementById("reset-btn").disabled = true
-    }, 750)
+    }, 500)
 }
 
 function getSquareID(square) {
