@@ -6,7 +6,22 @@
             <button class="mode-select" onclick="freePlayMode()">Free Play</button>
             <button class="mode-select" onclick="puzzleMode()">Solve Puzzles</button>
         </div>
-        <button id="login-btn">Log In</button>
+        <div id="user-corner">
+            <% if (!currentUser) { %>
+            <a class="users-btn" id="login-btn" href="/login">Log In</a>
+            <% } else { %>
+            <div id="user-info">
+                <p class="mb-1">
+                    <span class="mr-2"><i class="fa-regular fa-chess-queen"></i></span>
+                    <%= currentUser.username %>
+                </p>
+                <p id="user-rating" class="mb-0">Rating: <%= currentUser.rating %></p>
+            </div>
+            <a class="users-btn" id="logout-btn" href="/logout" title="Log out">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </a>
+            <% } %>
+        </div>
     </nav>
 
     <div id="game-window">
@@ -125,8 +140,8 @@
                 <div id="puzzle-end-screen">
                     <div id="puzzle-status"></div>
                     <div id="puzzle-info">
-                        <p id="user-rating">Your rating: </p>
-                        <p id="puzzle-rating">Puzzle rating: </p>
+                        <p id="rating-change"></p>
+                        <p id="puzzle-rating"></p>
                     </div>
                 </div>
             </div>
@@ -151,13 +166,8 @@
 
         </div>
     </div>
-
-    <button id="test-btn" onclick="clearPuzzleScreen()">test</button>
-    <h2 id="rating-display">Your Rating: 1200</h2>
-
-
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
     <script src="/gameLogic.js"></script>
     <script src="/moveTracker.js"></script>
     <script src="/gameSetup.js"></script>
     <script src="/puzzleHandler.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>

@@ -1,5 +1,30 @@
 let puzzle = {}
-let userRating = 1200
+let userRating
+
+getRatingFromServer()
+    .then((rating) => {
+        userRating = rating
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+
+function getRatingFromServer() {
+    return new Promise((resolve, reject) => {
+        axios.get("http://localhost:3000/user-rating")
+            .then((res) => {
+                const user = res.data
+                if (user.rating) {
+                    resolve(user.rating)
+                } else {
+                    resolve(null)
+                }
+            })
+            .catch((err) => {
+                reject(err)
+            })
+    })
+}
 
 function randomPuzzle() {
     try {
@@ -10,7 +35,7 @@ function randomPuzzle() {
                 // const { FEN, Moves, Rating} = puzzleData
                 // puzzleMoves = Moves.split(" ")
                 // puzzleRating = Rating
-                puzzle = {...puzzleData}
+                puzzle = { ...puzzleData }
                 console.log(puzzle)
 
                 clearBoard()
@@ -35,7 +60,7 @@ function startPuzzle(FEN) {
         flipBoard()
     }
     clearPuzzleScreen()
-    document.getElementById("reset-btn").disabled = true  
+    document.getElementById("reset-btn").disabled = true
 }
 
 const promotionLetterMap = new Map()
@@ -48,7 +73,7 @@ promotionLetterMap.set("", null)
 function puzzleAutoMove(move) {
     // disable move nav buttons while puzzle loads
     disableGameButtons()
-    
+
     setTimeout(() => {
         const start = document.getElementById(getSquareID(move.slice(0, 2)))
         const end = document.getElementById(getSquareID(move.slice(2, 4)))
@@ -65,7 +90,7 @@ function puzzleAutoMove(move) {
         const promotionPieceLetter = move.charAt(4) ? move.charAt(4) : ""
         const promotionPiece = promotionLetterMap.get(promotionPieceLetter)
         if (promotionPiece) {
-            document.querySelector(`.selector.piece.${promotionPiece}`).click()
+            document.querySelector(`.selector.piece.${ promotionPiece }`).click()
         }
 
         enableGameButtons()
@@ -78,8 +103,6 @@ function getSquareID(square) {
     const columnNumber = column.charCodeAt(0) - 96
     return columnNumber + row
 }
-
-
 
 function handlePuzzleMove(startSquare, endSquare) {
     const startCol = String.fromCharCode(96 + parseInt(startSquare.id[0]))
@@ -117,16 +140,19 @@ function handlePuzzleEnd(puzzleCorrect) {
     document.getElementById("move-display-container").classList.add("half-container")
     document.getElementById("puzzle-end-screen").classList.add(puzzleStatusClass)
     document.getElementById("puzzle-status").textContent = puzzleStatusText
-    document.getElementById("puzzle-rating").textContent = `Puzzle Rating: ${puzzle.Rating}`
+    document.getElementById("puzzle-rating").textContent = `Puzzle Rating: ${ puzzle.Rating }`
 
-    // display rating change
-    const ratingChange = getRatingChange(puzzleCorrect)
-    userRating += ratingChange
-    const displayRatingChange = ratingChange < 0 ? `${userRating} (${ratingChange})` : `${userRating} (+${ratingChange})`
-    document.getElementById("user-rating").textContent = `Your Rating: ${displayRatingChange}`
+    if (userRating) {
+        // display rating change
+        const ratingChange = getRatingChange(puzzleCorrect)
+        userRating += ratingChange
+        const displayRatingChange = ratingChange < 0 ? `${ userRating } (${ ratingChange })` : `${ userRating } (+${ ratingChange })`
+        document.getElementById("rating-change").textContent = `Your Rating: ${ displayRatingChange }`
 
-    // update html rating display
-    document.getElementById("rating-display").textContent = `Your Rating: ${userRating}`
+        // update html rating display
+        document.getElementById("user-rating").textContent = `Rating: ${ userRating }`
+        updateServerRating(userRating)
+    }
 }
 
 // win or lose 5 to 15 points of rating, average of 10
@@ -139,16 +165,24 @@ function getRatingChange(puzzleCorrect) {
     } else {
         ratingChange = Math.floor(10 - adjustment)
     }
-    
+
     // impose min of 5 and max of 15
     ratingChange = ratingChange < 5 ? 5 : ratingChange
-    ratingChange = ratingChange > 15 ? 15 : ratingChange 
+    ratingChange = ratingChange > 15 ? 15 : ratingChange
     // turn rating change negative if puzzle incorrect
     ratingChange = puzzleCorrect ? ratingChange : ratingChange * -1
-
-
-    
     return ratingChange
+}
+
+function updateServerRating(newRating) {
+    console.log("updateServerRating called")
+    axios.put("http://localhost:3000/update-rating", { newRating })
+        .then((res) => {
+            console.log(res)
+        })
+        .catch((err) => {s
+            console.log(err)
+        })
 }
 
 function clearPuzzleScreen() {

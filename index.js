@@ -38,6 +38,7 @@ app.use(session({
 }))
 app.use(flash())
 
+app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(passport.initialize())
 app.use(passport.session())
@@ -46,6 +47,7 @@ passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
 app.use((req, res, next) => {
+    res.locals.currentUser = req.user
     res.locals.success = req.flash("success")
     res.locals.error = req.flash("error")
     next()
@@ -54,13 +56,25 @@ app.use((req, res, next) => {
 app.use("/", userRoutes)
 
 app.get("/", (req, res) => {
-    res.render("home")
+    res.render("home",)
 })
 
 app.get("/random-puzzle", catchAsync(async (req, res) => {
     const random = Math.floor(Math.random() * 100000)
     const randomPuzzle = await Puzzle.findOne().skip(random)
+
     res.json(randomPuzzle)
+}))
+
+app.get("/user-rating", catchAsync(async (req, res) => {
+    const user = req.user
+    res.json(user)
+}))
+
+app.put("/update-rating", catchAsync(async (req, res) => {
+    const {newRating} = req.body
+    await User.findOneAndUpdate({username: req.user.username}, {rating: newRating})
+    res.json({ success: true, message: 'Rating updated successfully.' })
 }))
 
 app.use((req, res, next) => {
