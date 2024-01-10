@@ -1,5 +1,10 @@
 <% layout("layouts/boilerplate") %>
-    <div class="container">
+    <a href="/">
+        <button class="home-btn" title="Back to Home">
+            <i class="fa-solid fa-house"></i>
+        </button>
+    </a>
+    <div class="container user-sign">
         <h1 class="text-center mt-3">Register :P</h1>
         <form class="needs-validation" action="/register" method="POST" novalidate>
             <div class="mb-3">
@@ -12,7 +17,9 @@
                 <input class="form-control" type="password" id="password" name="password" required>
                 <div class="invalid-feedback">Please choose a password</div>
             </div>
-            <button class="btn btn-warning" onclick="validateForm()">Register</button>
+            <center>
+                <button class="btn btn-warning sign-btn" onclick="validateForm()">Register</button>
+            </center>
         </form>
     </div>
 
