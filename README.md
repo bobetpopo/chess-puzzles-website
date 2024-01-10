@@ -4,17 +4,15 @@
 
 Welcome to Chess :Puzzles! This full stack application allows chess enthusiasts to hone their tactics through diverse puzzles and challenge themselves to improve their rating.
 
-
-
 ![Free Play Mode Screenshot](./screenshots/free-play.png)
-
 *Free Play Mode*
 
 
 
 ![Puzzle Mode](./screenshots/puzzle-mode.png)
-
 *Puzzle Mode*
+
+**Technologies used**: HTML, CSS, JavaScript, Bootstrap, NodeJS, Express, EJS, MongoDB
 
 ## Features
 
@@ -58,13 +56,24 @@ Welcome to Chess :Puzzles! This full stack application allows chess enthusiasts 
 
 **Prerequisites**: NodeJS, MongoDB
 
+First, clone the repository
+
+    git clone https://github.com/bobetpopo/chess-puzzles-website.git
+
+Then, install dependencies
+
+    cd chess-puzzles-website
+    npm install
+
+To set up the puzzles on your machine:
+1. Get the puzzles [here](https://database.lichess.org/#puzzles). 
+2. Locally create the Mongo database `chessApp` and import the puzzles into a `puzzles` collection (the MongoDB Compass tool is great for this). 
+
+Finally, run `node index.js` to start the server on **localhost:3000**
 
 
 
 
-
-
-**Technologies used**: HTML, CSS, JavaScript, Bootstrap, NodeJS, Express, EJS, MongoDB
 
 
 
