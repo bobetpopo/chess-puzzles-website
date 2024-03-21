@@ -4,6 +4,8 @@
 
 Welcome to Chess :Puzzles! This full stack application allows chess enthusiasts to hone their tactics through diverse puzzles and challenge themselves to improve their rating.
 
+[Static Demo](https://bobetpopo.github.io/chess-puzzles-demo/)
+
 ![Free Play Mode Screenshot](./screenshots/free-play.png)
 *Free Play Mode*
 
